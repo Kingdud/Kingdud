@@ -61,7 +61,7 @@ body
 
 #deGildedHeroes {
     overflow-y:auto;
-    max-height: 825px;
+    max-height: 800px;
     display: none;
 }
 
