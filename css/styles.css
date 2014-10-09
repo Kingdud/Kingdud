@@ -69,10 +69,10 @@ body
     width: 120px;
 }
 
-#heroes li:hover
-{
-    background-color:rgba(200,200,255,0.2)!important;
-}
+/*#heroes li:hover*/
+/*{*/
+    /*background-color:rgba(200,200,255,0.2);*/
+/*}*/
 
 #input {
     overflow: hidden;
@@ -98,4 +98,16 @@ body
 
 #import button:hover {
     background-color:rgba(200,200,255,0.2);
+}
+
+.disabled {
+    color: #777777;
+}
+
+.degild {
+    background-color: #ff0000;
+}
+
+.gild {
+    background-color: #1aff00;
 }
