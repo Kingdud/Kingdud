@@ -31,6 +31,7 @@ var App = {
 		{ id: 25, name: "Grant, the General", epicLevel: 0 },
 		{ id: 26, name: "Frostleaf", epicLevel: 0 }
 	],
+	'nextHeroes': [],
 	'fromAntiCheatFormat': function(string) {
 		var elements = string.split(App.ANTI_CHEAT_CODE);
 		var data = App.unSprinkle(elements[0]);
@@ -97,11 +98,15 @@ var App = {
 	'updateNextHeroes': function ( lookupHero ) {
 		var nextHeroes = App.getNextHeroes(25, lookupHero);
 
-		var $nextHeroes = $('#nextHeroes');
+		App.nextHeroes = nextHeroes;
+
+		var $nextHeroes = $('#nextHeroes'),
+			$heroes = $('#heroes');
 		$nextHeroes.empty();
 		nextHeroes.forEach( function( hero ) {
 			$nextHeroes.append( $('<li>').html( hero.name ) );
 		});
+		App.updateNextGild();
 	},
 	'addHero': function ( hero ) {
 		var $deGildedHeroes = $('#deGildedHeroes');
@@ -116,9 +121,40 @@ var App = {
 		$('#spentSouls').html( deGildedHeroes.length * 2 + ' spent');
 		$deGildedHeroes.data('deGildedHeroes', JSON.stringify(deGildedHeroes))
 	},
+	'updateNextGild': function () {
+		var $heroes = $('#heroes'),
+			$nextHeroes = $('#nextHeroes');
+
+		$heroes.find('li').removeClass('gild');
+
+		if ($heroes.find('li.degild')) {
+
+			if ($heroes.find('li.degild .name').html() == $nextHeroes.find("li:first").html()) {
+				var hero = $nextHeroes.find("li:first").html();
+				var found = false;
+				App.nextHeroes.forEach(function ( nextHero ) {
+
+					if (! found) {
+						if (hero != nextHero.name) {
+							hero = nextHero.name;
+							found = true;
+						}
+					}
+				});
+
+				if (found) {
+					$heroes.find("li .name:contains('"+hero+"')").parent().addClass('gild');
+				}
+			}
+			else {
+				$heroes.find("li .name:contains('"+$nextHeroes.find("li:first").html()+"')").parent().addClass('gild');
+			}
+		}
+		else {
+			$heroes.find("li .name:contains('"+$nextHeroes.find("li:first").html()+"')").parent().addClass('gild');
+		}
+	},
 	'init': function() {
-
-
 		$('#decodeButton').click(function () {
 			var $deGildedHeroes = $('#deGildedHeroes');
 			$deGildedHeroes.empty();
@@ -127,12 +163,11 @@ var App = {
 			App.start();
 			ga('send', 'event', 'button', 'click', 'import');
 		});
-
-
 	},
 	'start': function() {
 		var lookupSavedHero = {};
-		var lookupHero = {};
+		var lookupHero = {},
+			$heroes = $('#heroes');
 
 		$('.list, .floater').show();
 		$('#import').hide();
@@ -155,7 +190,12 @@ var App = {
 		App.updateNextHeroes( lookupHero );
 
 		rivets.binders.flash = function (el, value) {
-			$(el).css({color: (value == 0) ? '#777' : '#FFF'});
+			if (value == 0) {
+				$(el).addClass( 'disabled' );
+				$(el).removeClass('degild');
+			}
+			else
+				$(el).removeClass( 'disabled' );
 
 			if (! $(el).data('flashing') ) {
 				$(el).data('flashing', true).fadeOut(300).fadeIn(300, function(){
@@ -164,7 +204,7 @@ var App = {
 			}
 		};
 
-		App.heroesView = rivets.bind($('#heroes'), {
+		App.heroesView = rivets.bind( $heroes, {
 			heroes: App.heroes,
 
 			controller: {
@@ -196,6 +236,18 @@ var App = {
 
 		App.infoView = rivets.bind($('#info'), {
 			savegame: App.savegame
+		});
+
+		App.updateNextGild();
+
+		$heroes.find('li').hover(function () {
+			if (! $(this).hasClass('disabled') ) {
+				$(this).addClass('degild');
+				App.updateNextGild();
+			}
+		}, function () {
+			$("#heroes").find('li').removeClass('degild');
+			App.updateNextGild();
 		});
 	}
 
