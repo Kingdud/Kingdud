@@ -125,6 +125,7 @@ var App = {
 			$deGildedHeroes.data('deGildedHeroes', JSON.stringify([]));
 			App.savegame = JSON.parse( App.decode( $('#input').val() ) );
 			App.start();
+			ga('send', 'event', 'button', 'click', 'import');
 		});
 
 
@@ -177,6 +178,7 @@ var App = {
 							data.hero.epicLevel--;
 							App.savegame.heroSouls = App.savegame.heroSouls - 2;
 							App.updateNextHeroes( lookupHero );
+							ga('send', 'event', 'button', 'click', 'degild', data.hero.id);
 						}
 					}
 					if (data.hero.epicLevel > 0) {
@@ -186,6 +188,7 @@ var App = {
 						data.hero.epicLevel--;
 						App.savegame.heroSouls = App.savegame.heroSouls - 2;
 						App.updateNextHeroes( lookupHero );
+						ga('send', 'event', 'button', 'click', 'degild', data.hero.id);
 					}
 				}
 			}
