@@ -249,6 +249,8 @@ var App = {
 			$("#heroes").find('li').removeClass('degild');
 			App.updateNextGild();
 		});
+		
+		$('#deGildedHeroes').height($('#nextHeroes').height());
 	}
 
 };
