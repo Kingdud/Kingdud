@@ -24,14 +24,11 @@ body
 .list ul
 {
     list-style:none inside;
-
     color:#fff;
-
-    background-color:rgba(200,200,255,0.1);
-    border-radius:10px;
-    cursor:pointer;
-    margin:20px 0 0 10px;
-    width: 270px;
+    background-color: rgba(200,200,255,0.1);
+    border-radius: 10px;
+    margin: 20px 0 0 10px;
+    width: 285px;
     padding:0;
 }
 
@@ -40,8 +37,6 @@ body
     clear:both;
     border-bottom:1px solid rgba(200,200,255,0.1);
     padding:5px 10px;
-
-
 }
 
 .cost
@@ -57,11 +52,7 @@ body
     display: none;
 }
 
-#info {
-    width: 120px;
-}
-
-#heroes li
+#heroes li, #autoDegild, #speed
 {
     -webkit-touch-callout:none;
     -webkit-user-select:none;
@@ -69,6 +60,8 @@ body
     -ms-user-select:none;
     -khtml-user-select:none;
     user-select:none;
+
+    cursor: pointer;
 }
 
 #input {
@@ -128,4 +121,16 @@ body
     border-top: 10px solid white;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
+}
+
+#autoDegild:hover, #speed:hover {
+    background-color: #1aff00;
+}
+
+.stop:hover {
+    background-color: #ff0000 !important;
+}
+
+#speed {
+    display:none;
 }

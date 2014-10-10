@@ -33,6 +33,9 @@ var App = {
 	],
 	'nextHeroes': [],
 	'sorting': false,
+	'autoDegild': 0,
+	'autoDegildSpeed': 1000,
+	'degilds': 0,
 	'fromAntiCheatFormat': function(string) {
 		var elements = string.split(App.ANTI_CHEAT_CODE);
 		var data = App.unSprinkle(elements[0]);
@@ -127,7 +130,7 @@ var App = {
 		deGildedHeroes.forEach( function( hero ) {
 			$deGildedHeroes.append( $('<li>').html( hero.name ) );
 		});
-		$('#spentSouls').html( deGildedHeroes.length * 2 + ' spent');
+		$('#spentSouls').html( deGildedHeroes.length * 2 + ' Souls spent');
 		$deGildedHeroes.data('deGildedHeroes', JSON.stringify(deGildedHeroes))
 	},
 	'updateNextGild': function () {
@@ -209,6 +212,36 @@ var App = {
 			App.sorting = false;
 		}
 	},
+	'getLeastEfficientHero': function () {
+		var leastEfficientHero = App.heroes[5];
+
+		App.heroes.forEach(function ( hero ) {
+			if (hero.epicLevel && hero.efficiency < leastEfficientHero.efficiency) {
+				leastEfficientHero = hero;
+			}
+		});
+
+		return leastEfficientHero;
+	},
+	'toggleAutoDegild': function () {
+		if (App.autoDegild) {
+			clearInterval(App.autoDegild);
+			App.autoDegild = 0;
+		}
+		else {
+			App.autoDegild = setInterval(function() {
+				var leastEfficientHero = App.getLeastEfficientHero();
+				$('#heroes').find("li .name:contains('"+leastEfficientHero.name+"')").parent().click();
+			}, App.autoDegildSpeed);
+		}
+	},
+	'updateAutoDegild': function () {
+		clearInterval(App.autoDegild);
+		App.autoDegild = setInterval(function() {
+			var leastEfficientHero = App.getLeastEfficientHero();
+			$('#heroes').find("li .name:contains('"+leastEfficientHero.name+"')").parent().click();
+		}, App.autoDegildSpeed);
+	},
 	'init': function() {
 		$('#decodeButton').click(function () {
 			var $deGildedHeroes = $('#deGildedHeroes');
@@ -227,7 +260,7 @@ var App = {
 				App.savegame = JSON.parse( App.decode( $('#input').val() ) );
 				App.start();
 				ga('send', 'event', 'textarea', 'paste', 'import');
-			}, 50);
+			}, 100);
 		});
 	},
 	'start': function() {
@@ -284,17 +317,26 @@ var App = {
 							data.hero.epicLevel--;
 							App.savegame.heroSouls = App.savegame.heroSouls - 2;
 							App.updateNextHeroes();
-							ga('send', 'event', 'button', 'click', 'degild', data.hero.id);
+							App.degilds++;
+							$("#degilds").html( App.degilds + " Heroes degilded");
+							if (! App.autoDegild) {
+								ga('send', 'event', 'button', 'click', 'degild', data.hero.id);
+							}
 						}
-					}
-					if (data.hero.epicLevel > 0) {
-						hero = lookupHero[ App.getRandomGoldenHero( data.hero.id ) ];
-						App.addHero( data.hero );
-						hero.epicLevel++;
-						data.hero.epicLevel--;
-						App.savegame.heroSouls = App.savegame.heroSouls - 2;
-						App.updateNextHeroes();
-						ga('send', 'event', 'button', 'click', 'degild', data.hero.id);
+					} else {
+						if (data.hero.epicLevel > 0) {
+							hero = lookupHero[ App.getRandomGoldenHero( data.hero.id ) ];
+							App.addHero( data.hero );
+							hero.epicLevel++;
+							data.hero.epicLevel--;
+							App.savegame.heroSouls = App.savegame.heroSouls - 2;
+							App.updateNextHeroes();
+							App.degilds++;
+							$("#degilds").html( App.degilds + " Heroes degilded");
+							if (! App.autoDegild) {
+								ga('send', 'event', 'button', 'click', 'degild', data.hero.id);
+							}
+						}
 					}
 				}
 			}
@@ -323,6 +365,24 @@ var App = {
 		$('#sort').click(function () {
 			App.toggleSorting();
 		});
+
+		$('#autoDegild').click(function () {
+			App.toggleAutoDegild();
+			$(this).toggleClass( "stop", App.autoDegild );
+			if (App.autoDegild) {
+				$(this).html('stop auto degild');
+				$('#speed').show().click( function() {
+					App.autoDegildSpeed = Math.round(App.autoDegildSpeed * 0.9);
+					App.updateAutoDegild();
+					$(this).html('degild faster ('+Math.round( 1000 / App.autoDegildSpeed * 100) / 100+' per second)');
+				});
+			} else {
+				$('#speed').hide();
+				$(this).html('auto degild');
+			}
+
+		});
+
 	}
 
 };
