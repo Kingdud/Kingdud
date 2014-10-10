@@ -54,10 +54,11 @@ var App = {
 		return result.join("");
 	},
 	'getHash': function (string) {
-		var charaters = string.split();
-		charaters.sort();
-		var sortedCharaters = charaters.join();
-		return CryptoJS.MD5(sortedCharaters + App.SALT);
+		var characters = [];
+		characters[0] = string;
+		characters.sort();
+		var sortedCharacters = characters.join();
+		return CryptoJS.MD5(sortedCharacters + App.SALT);
 	},
 	'decode': function (code) {
 		var string = code;
@@ -212,14 +213,28 @@ var App = {
 	},
 	'getLeastEfficientHero': function () {
 		var leastEfficientHero = App.heroes[ 5 ];
+		var found = false;
+
+		var $nextHeroLi = $('#heroes').find('.gild');
+
+		if ( App.nextHeroes[0].epicLevel > $nextHeroLi.find('.slider-range').val() ) {
+			return App.getHeroByName( App.nextHeroes[0].name );
+		}
 
 		App.heroes.forEach(function (hero) {
-			if ( hero.epicLevel && hero.efficiency < leastEfficientHero.efficiency ) {
+			var $heroLi = App.getHeroLiByName( hero.name );
+			var sliderValue = $heroLi.find('.slider-range').val();
+
+			if ( hero.epicLevel && hero.efficiency <= leastEfficientHero.efficiency && hero.epicLevel > sliderValue ) {
 				leastEfficientHero = hero;
+				found = true;
 			}
 		});
 
-		return leastEfficientHero;
+		return (found) ? leastEfficientHero : false;
+	},
+	'getHeroLiByName': function ( name ) {
+		return $('#heroes').find("li .name:contains('" + name + "')").parent();
 	},
 	'toggleAutoDegild': function () {
 		if ( App.autoDegild ) {
@@ -228,17 +243,23 @@ var App = {
 		}
 		else {
 			App.autoDegild = setInterval(function () {
-				var leastEfficientHero = App.getLeastEfficientHero();
-				$('#heroes').find("li .name:contains('" + leastEfficientHero.name + "')").parent().click();
+				App.getHeroLiByName( App.getLeastEfficientHero().name ).click();
 			}, App.autoDegildSpeed);
 		}
 	},
 	'updateAutoDegild': function () {
 		clearInterval(App.autoDegild);
 		App.autoDegild = setInterval(function () {
-			var leastEfficientHero = App.getLeastEfficientHero();
-			$('#heroes').find("li .name:contains('" + leastEfficientHero.name + "')").parent().click();
+			App.getHeroLiByName( App.getLeastEfficientHero().name ).click();
 		}, App.autoDegildSpeed);
+	},
+	'updateNumberOfGilds': function () {
+		App.numberOfGilds = 0;
+		App.heroes.forEach(function ( hero ) {
+			if (hero.epicLevel > 0)
+				App.numberOfGilds += hero.epicLevel;
+		})
+		$("#gildies").html(App.numberOfGilds + " gilded Heroes");
 	},
 	'init': function () {
 		$('#decodeButton').click(function () {
@@ -307,6 +328,7 @@ var App = {
 						lookupHero[ App.heroes[ j ].id ] = App.heroes[ j ];
 					}
 					var hero;
+
 					if ( e.shiftKey ) {
 						while ( data.hero.epicLevel > 0 && App.savegame.heroSouls >= 2 ) {
 							hero = lookupHero[ App.getRandomGoldenHero(data.hero.id) ];
@@ -364,12 +386,18 @@ var App = {
 			App.toggleSorting();
 		});
 
+		$('#autoDegilding').click(function () {
+			$('#autoDegild').slideToggle();
+			$('.slider-range').slideToggle();
+			ga('send', 'event', 'menu', 'click', 'autoGilding', 1);
+		});
+
 		$('#autoDegild').click(function () {
 			App.toggleAutoDegild();
 			$(this).toggleClass("stop", App.autoDegild);
 			if ( App.autoDegild ) {
-				$(this).html('stop auto degild');
-				$('#speed').show().click(function () {
+				$(this).html('stop');
+				$('#speed').slideDown().click(function () {
 					App.autoDegildSpeed = Math.round(App.autoDegildSpeed * 0.9);
 					App.updateAutoDegild();
 					$(this).html('degild faster (' + Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' per second)');
@@ -377,13 +405,82 @@ var App = {
 				});
 				ga('send', 'event', 'menu', 'click', 'autoGild_start', 1);
 			} else {
-				$('#speed').hide();
-				$(this).html('auto degild');
+				$('#speed').slideUp();
+				$(this).html('start');
 				ga('send', 'event', 'menu', 'click', 'autoGild_stop', 1);
 			}
 
 		});
 
+		App.updateNumberOfGilds();
+
+		App.heroes.forEach(function (hero) {
+			var $heroLi = App.getHeroLiByName( hero.name );
+			$heroLi.find('.slider-range').noUiSlider({
+				start: [ 0 ],
+				step: 1,
+				range: {
+					'min': [  0 ],
+					'max': [ App.numberOfGilds ]
+				},
+				format: {
+					to: function ( value ) {
+						return value;
+					},
+					from: function ( value ) {
+						return value;
+					}
+				},
+				slide: function(event, ui) {
+
+
+				}
+			});
+		});
+
+		$heroes.find('.slider-range:first').val( App.numberOfGilds );
+
+		var $sliderRange = $('.slider-range');
+
+		$sliderRange.on({
+			slide: function () {
+				var total = 0,
+					oVal = $(this).val();
+
+				$sliderRange.not(this).each(function() {
+					total += $(this).val();
+				});
+
+				total += oVal;
+				var delta = App.numberOfGilds - total;
+
+				$sliderRange.not(this).each(function() {
+
+					var new_value = $(this).val() + Math.floor(delta / (App.heroes.length - 1) );
+
+					if (new_value < 0 || oVal == App.numberOfGilds)
+						new_value = 0;
+
+					if (new_value > App.numberOfGilds)
+						new_value = App.numberOfGilds;
+
+					$(this).val( new_value );
+				});
+			},
+			change: function () {
+				ga('send', 'event', 'slider', 'change', $(this).parent().find('.name').html(), 1);
+			}
+		});
+
+		$sliderRange.click(function(event){
+			event.stopPropagation();
+		});
+
+		$sliderRange.Link('lower').to('-inline-<div class="tooltip"></div>', function ( value ) {
+			$(this).html(
+				'<span>' + value + '</span>'
+			);
+		});
 	}
 
 };

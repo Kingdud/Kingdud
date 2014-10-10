@@ -23,6 +23,7 @@
   ],
   "dependencies": {
     "jquery": "~2.1.1",
-    "rivets": "~0.6.10"
+    "rivets": "~0.6.10",
+    "nouislider": "~7.0.9"
   }
 }
