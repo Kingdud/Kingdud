@@ -18,7 +18,7 @@ var App = {
 		{ id: 12, name: "Mercedes, Duchess of Blades", epicLevel: 0, efficiency: 2.052e62 / 2259 },
 		{ id: 13, name: "Bobby, Bounty Hunter", epicLevel: 0, efficiency: 4.364e61 / 2205 },
 		{ id: 14, name: "Broyle Lindoven, Fire Mage", epicLevel: 0, efficiency: 8.683e58 / 2083 },
-		{ id: 15, name: "Sir George II, King's Guard", epicLevel: 0, efficiency: 8.899e60 / 2119 },
+		{ id: 15, name: "Sir George II, Kings Guard", epicLevel: 0, efficiency: 8.899e60 / 2119 },
 		{ id: 16, name: "King Midas", epicLevel: 0, efficiency: 8.061e52 / 1813 },
 		{ id: 17, name: "Referi Jerator, Ice Wizard", epicLevel: 0, efficiency: 1.604e61 / 2063 },
 		{ id: 18, name: "Abaddon", epicLevel: 0, efficiency: 5.978e59 / 1982 },
