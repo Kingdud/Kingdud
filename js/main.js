@@ -289,7 +289,7 @@ var App = {
 				$(this).attr('title', 'Sort the heroes by normal order');
 			}
 			else {
-				$heroes.find('li').sort(function (b, a) {
+				$heroes.find('li').sort(function (a, b) {
 
 					var hero1 = App.getHeroByName($(a).find('.name').html());
 					var hero2 = App.getHeroByName($(b).find('.name').html());
