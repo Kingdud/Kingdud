@@ -177,6 +177,38 @@ var App = {
 
 		return foundHero;
 	},
+	'toggleSorting': function () {
+		var $heroes = $('#heroes'),
+			$sort = $('#sort');
+		if (! App.sorting ) {
+			$heroes.find('li').sort(function (b, a) {
+
+				var hero1 = App.getHeroByName($(a).find('.name').html());
+				var hero2 = App.getHeroByName($(b).find('.name').html());
+
+				return +hero1.efficiency - +hero2.efficiency;
+			}).appendTo( $heroes );
+
+			$sort.removeClass('arrow-down').addClass('arrow-up');
+			$sort.attr('title', 'Sort the heroes by normal order');
+
+			App.sorting = true;
+		}
+		else {
+			$heroes.find('li').sort(function (a, b) {
+
+				var hero1 = App.getHeroByName($(a).find('.name').html());
+				var hero2 = App.getHeroByName($(b).find('.name').html());
+
+				return +hero1.id - +hero2.id;
+			}).appendTo( $heroes );
+
+			$sort.removeClass('arrow-up').addClass('arrow-down');
+			$sort.attr('title', 'Sort the heroes by max efficiency');
+
+			App.sorting = false;
+		}
+	},
 	'init': function() {
 		$('#decodeButton').click(function () {
 			var $deGildedHeroes = $('#deGildedHeroes');
@@ -275,31 +307,10 @@ var App = {
 
 		$('#deGildedHeroes').height($('#nextHeroes').height());
 
+		App.toggleSorting();
+
 		$('#sort').click(function () {
-			if (! App.sorting ) {
-				$heroes.find('li').sort(function (b, a) {
-
-					var hero1 = App.getHeroByName($(a).find('.name').html());
-					var hero2 = App.getHeroByName($(b).find('.name').html());
-
-					return +hero1.efficiency - +hero2.efficiency;
-				}).appendTo( $heroes );
-				App.sorting = true;
-				$(this).removeClass('arrow-down').addClass('arrow-up');
-				$(this).attr('title', 'Sort the heroes by normal order');
-			}
-			else {
-				$heroes.find('li').sort(function (a, b) {
-
-					var hero1 = App.getHeroByName($(a).find('.name').html());
-					var hero2 = App.getHeroByName($(b).find('.name').html());
-
-					return +hero1.id - +hero2.id;
-				}).appendTo( $heroes );
-				App.sorting = false;
-				$(this).removeClass('arrow-up').addClass('arrow-down');
-				$(this).attr('title', 'Sort the heroes by max efficiency');
-			}
+			App.toggleSorting();
 		});
 	}
 
