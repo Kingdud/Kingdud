@@ -218,6 +218,17 @@ var App = {
 			App.start();
 			ga('send', 'event', 'button', 'click', 'import');
 		});
+
+		$('#input').on('paste', function () {
+			setTimeout(function () {
+				var $deGildedHeroes = $('#deGildedHeroes');
+				$deGildedHeroes.empty();
+				$deGildedHeroes.data('deGildedHeroes', JSON.stringify([]));
+				App.savegame = JSON.parse( App.decode( $('#input').val() ) );
+				App.start();
+				ga('send', 'event', 'textarea', 'paste', 'import');
+			}, 50);
+		});
 	},
 	'start': function() {
 		var lookupSavedHero = {},
