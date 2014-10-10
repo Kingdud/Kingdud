@@ -5,33 +5,34 @@ var App = {
 	'RAND_MAX': 2147483646,
 	'savegame': [],
 	'heroes': [
-		{ id: 2, name: "Tree Beast", epicLevel: 0 },
-		{ id: 3, name: "Ivan, the Drunken Brawler", epicLevel: 0 },
-		{ id: 4, name: "Brittany, the Beach Princess", epicLevel: 0 },
-		{ id: 5, name: "The Wandering Fisherman", epicLevel: 0 },
-		{ id: 6, name: "Betty Clicker", epicLevel: 0 },
-		{ id: 7, name: "The Masked Samurai", epicLevel: 0 },
-		{ id: 8, name: "Leon", epicLevel: 0 },
-		{ id: 9, name: "The Great Forest Seer", epicLevel: 0 },
-		{ id: 10, name: "Alexa, the Assassin", epicLevel: 0 },
-		{ id: 11, name: "Natalia, Ice Apprentice", epicLevel: 0 },
-		{ id: 12, name: "Mercedes, Duchess of Blades", epicLevel: 0 },
-		{ id: 13, name: "Bobby, Bounty Hunter", epicLevel: 0 },
-		{ id: 14, name: "Broyle Lindoven, Fire Mage", epicLevel: 0 },
-		{ id: 15, name: "Sir George II, King's Guard", epicLevel: 0 },
-		{ id: 16, name: "King Midas", epicLevel: 0 },
-		{ id: 17, name: "Referi Jerator, Ice Wizard", epicLevel: 0 },
-		{ id: 18, name: "Abaddon", epicLevel: 0 },
-		{ id: 19, name: "Ma Zhu", epicLevel: 0 },
-		{ id: 20, name: "Amenhotep", epicLevel: 0 },
-		{ id: 21, name: "Beastlord", epicLevel: 0 },
-		{ id: 22, name: "Athena, Goddess of War", epicLevel: 0 },
-		{ id: 23, name: "Aphrodite, Goddess of Love", epicLevel: 0 },
-		{ id: 24, name: "Shinatobe, Wind Deity", epicLevel: 0 },
-		{ id: 25, name: "Grant, the General", epicLevel: 0 },
-		{ id: 26, name: "Frostleaf", epicLevel: 0 }
+		{ id: 2, name: "Tree Beast", epicLevel: 0, efficiency: 2.484e63 / 2541 },
+		{ id: 3, name: "Ivan, the Drunken Brawler", epicLevel: 0, efficiency: 5.530e63 / 2529 },
+		{ id: 4, name: "Brittany, the Beach Princess", epicLevel: 0, efficiency: 7.501e63 / 2513 },
+		{ id: 5, name: "The Wandering Fisherman", epicLevel: 0, efficiency: 3.212e61 / 2412 },
+		{ id: 6, name: "Betty Clicker", epicLevel: 0, efficiency: 8.903e55 / 2199},
+		{ id: 7, name: "The Masked Samurai", epicLevel: 0, efficiency: 1.056e64 / 2450},
+		{ id: 8, name: "Leon", epicLevel: 0, efficiency: 2.012e61 / 2337},
+		{ id: 9, name: "The Great Forest Seer", epicLevel: 0, efficiency: 3.736e63 / 2387},
+		{ id: 10, name: "Alexa, the Assassin", epicLevel: 0, efficiency: 3.173e59 / 2222},
+		{ id: 11, name: "Natalia, Ice Apprentice", epicLevel: 0, efficiency: 6.228e62 / 2306 },
+		{ id: 12, name: "Mercedes, Duchess of Blades", epicLevel: 0, efficiency: 2.052e62 / 2259 },
+		{ id: 13, name: "Bobby, Bounty Hunter", epicLevel: 0, efficiency: 4.364e61 / 2205 },
+		{ id: 14, name: "Broyle Lindoven, Fire Mage", epicLevel: 0, efficiency: 8.683e58 / 2083 },
+		{ id: 15, name: "Sir George II, King's Guard", epicLevel: 0, efficiency: 8.899e60 / 2119 },
+		{ id: 16, name: "King Midas", epicLevel: 0, efficiency: 8.061e52 / 1813 },
+		{ id: 17, name: "Referi Jerator, Ice Wizard", epicLevel: 0, efficiency: 1.604e61 / 2063 },
+		{ id: 18, name: "Abaddon", epicLevel: 0, efficiency: 5.978e59 / 1982 },
+		{ id: 19, name: "Ma Zhu", epicLevel: 0, efficiency: 2.553e61 / 2006 },
+		{ id: 20, name: "Amenhotep", epicLevel: 0, efficiency: 1.752e55 / 1764 },
+		{ id: 21, name: "Beastlord", epicLevel: 0, efficiency: 1.914e59 / 1864 },
+		{ id: 22, name: "Athena, Goddess of War", epicLevel: 0, efficiency: 6.560e61 / 1900 },
+		{ id: 23, name: "Aphrodite, Goddess of Love", epicLevel: 0, efficiency: 3.822e62 / 1872 },
+		{ id: 24, name: "Shinatobe, Wind Deity", epicLevel: 0, efficiency: 2.830e61 / 1779 },
+		{ id: 25, name: "Grant, the General", epicLevel: 0, efficiency: 1.562e61 / 1686 },
+		{ id: 26, name: "Frostleaf", epicLevel: 0, efficiency: 1.107e63 / 1657 }
 	],
 	'nextHeroes': [],
+	'sorting': false,
 	'fromAntiCheatFormat': function(string) {
 		var elements = string.split(App.ANTI_CHEAT_CODE);
 		var data = App.unSprinkle(elements[0]);
@@ -86,22 +87,30 @@ var App = {
 		}
 		return heroId;
 	},
-	'getNextHeroes': function (max, lookup) {
+	'getNextHeroes': function (max) {
 		var seed = App.savegame.epicHeroSeed;
+		var lookupHero = {};
+
+		for (var j = 0; j < App.heroes.length; j++) {
+			lookupHero[App.heroes[j].id] = App.heroes[j];
+		}
+
 		var nextHeroes = [];
 		for (var i = 0;i<max;i++) {
-			nextHeroes[i] = lookup[App.getRandomGoldenHero()];
+			nextHeroes[i] = lookupHero[App.getRandomGoldenHero()];
 		}
 		App.savegame.epicHeroSeed = seed;
+
 		return nextHeroes;
 	},
-	'updateNextHeroes': function ( lookupHero ) {
-		var nextHeroes = App.getNextHeroes(25, lookupHero);
+	'updateNextHeroes': function () {
+
+		var nextHeroes = App.getNextHeroes(25);
 
 		App.nextHeroes = nextHeroes;
 
-		var $nextHeroes = $('#nextHeroes'),
-			$heroes = $('#heroes');
+		var $nextHeroes = $('#nextHeroes');
+
 		$nextHeroes.empty();
 		nextHeroes.forEach( function( hero ) {
 			$nextHeroes.append( $('<li>').html( hero.name ) );
@@ -154,6 +163,20 @@ var App = {
 			$heroes.find("li .name:contains('"+$nextHeroes.find("li:first").html()+"')").parent().addClass('gild');
 		}
 	},
+	'getHeroByName': function( name ) {
+		var found = false;
+		var foundHero = false;
+		App.heroes.forEach(function ( hero ) {
+			if (! found) {
+				if (name == hero.name) {
+					foundHero = hero;
+					found = true;
+				}
+			}
+		});
+
+		return foundHero;
+	},
 	'init': function() {
 		$('#decodeButton').click(function () {
 			var $deGildedHeroes = $('#deGildedHeroes');
@@ -165,8 +188,7 @@ var App = {
 		});
 	},
 	'start': function() {
-		var lookupSavedHero = {};
-		var lookupHero = {},
+		var lookupSavedHero = {},
 			$heroes = $('#heroes');
 
 		$('.list, .floater').show();
@@ -179,15 +201,11 @@ var App = {
 			lookupSavedHero[savedHeroes[i].id] = savedHeroes[i];
 		}
 
-		for (var j = 0; j < App.heroes.length; j++) {
-			lookupHero[App.heroes[j].id] = App.heroes[j];
-		}
-
 		App.heroes.forEach(function ( hero ) {
 			hero.epicLevel = lookupSavedHero[ hero.id ].epicLevel;
 		});
 
-		App.updateNextHeroes( lookupHero );
+		App.updateNextHeroes();
 
 		rivets.binders.flash = function (el, value) {
 			if (value == 0) {
@@ -209,6 +227,11 @@ var App = {
 
 			controller: {
 				'deGild': function (e, data) {
+					var lookupHero = {};
+
+					for (var j = 0; j < App.heroes.length; j++) {
+						lookupHero[App.heroes[j].id] = App.heroes[j];
+					}
 					var hero;
 					if ( e.shiftKey) {
 						while (data.hero.epicLevel > 0 && App.savegame.heroSouls >= 2) {
@@ -217,7 +240,7 @@ var App = {
 							hero.epicLevel++;
 							data.hero.epicLevel--;
 							App.savegame.heroSouls = App.savegame.heroSouls - 2;
-							App.updateNextHeroes( lookupHero );
+							App.updateNextHeroes();
 							ga('send', 'event', 'button', 'click', 'degild', data.hero.id);
 						}
 					}
@@ -227,7 +250,7 @@ var App = {
 						hero.epicLevel++;
 						data.hero.epicLevel--;
 						App.savegame.heroSouls = App.savegame.heroSouls - 2;
-						App.updateNextHeroes( lookupHero );
+						App.updateNextHeroes();
 						ga('send', 'event', 'button', 'click', 'degild', data.hero.id);
 					}
 				}
@@ -249,8 +272,35 @@ var App = {
 			$("#heroes").find('li').removeClass('degild');
 			App.updateNextGild();
 		});
-		
+
 		$('#deGildedHeroes').height($('#nextHeroes').height());
+
+		$('#sort').click(function () {
+			if (! App.sorting ) {
+				$heroes.find('li').sort(function (b, a) {
+
+					var hero1 = App.getHeroByName($(a).find('.name').html());
+					var hero2 = App.getHeroByName($(b).find('.name').html());
+
+					return +hero1.efficiency - +hero2.efficiency;
+				}).appendTo( $heroes );
+				App.sorting = true;
+				$(this).removeClass('arrow-down').addClass('arrow-up');
+				$(this).attr('title', 'Sort the heroes by normal order');
+			}
+			else {
+				$heroes.find('li').sort(function (b, a) {
+
+					var hero1 = App.getHeroByName($(a).find('.name').html());
+					var hero2 = App.getHeroByName($(b).find('.name').html());
+
+					return +hero1.id - +hero2.id;
+				}).appendTo( $heroes );
+				App.sorting = false;
+				$(this).removeClass('arrow-up').addClass('arrow-down');
+				$(this).attr('title', 'Sort the heroes by max efficiency');
+			}
+		});
 	}
 
 };
