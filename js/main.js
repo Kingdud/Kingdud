@@ -320,7 +320,7 @@ var App = {
 							App.degilds++;
 							$("#degilds").html( App.degilds + " Heroes degilded");
 							if (! App.autoDegild) {
-								ga('send', 'event', 'button', 'click', 'degild', data.hero.id);
+								ga('send', 'event', 'button', 'click', 'degild_'+data.hero.id, 1);
 							}
 						}
 					} else {
@@ -334,7 +334,7 @@ var App = {
 							App.degilds++;
 							$("#degilds").html( App.degilds + " Heroes degilded");
 							if (! App.autoDegild) {
-								ga('send', 'event', 'button', 'click', 'degild', data.hero.id);
+								ga('send', 'event', 'button', 'click', 'degild_'+data.hero.id, 1);
 							}
 						}
 					}
