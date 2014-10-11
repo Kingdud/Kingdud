@@ -128,7 +128,7 @@ body
 }
 
 #autoDegild {
-    display: none;
+    /*display: none;*/
 }
 
 #autoDegild:hover {

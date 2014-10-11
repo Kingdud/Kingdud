@@ -447,18 +447,15 @@ var App = {
 		});
 
 		$('#autoDegilding').click(function () {
-			if (! App.autoDegild) {
-				$('#autoDegild').slideToggle();
-				$('.slider-range').slideToggle();
-				ga('send', 'event', 'menu', 'click', 'autoGilding', 1);
-			}
+			$('.slider-range').slideToggle();
+			ga('send', 'event', 'menu', 'click', 'editPriorities', 1);
 		});
 
 		$('#autoDegild').click(function () {
 			App.toggleAutoDegild();
 			$(this).toggleClass("stop", App.autoDegild);
 			if ( App.autoDegild ) {
-				$(this).html('stop');
+				$(this).html('stop auto degild');
 				$('#speed').slideDown().click(function () {
 					App.autoDegildSpeed = Math.round(App.autoDegildSpeed * 0.9);
 					App.updateAutoDegild();
@@ -468,8 +465,7 @@ var App = {
 				$('.slider-range').slideUp();
 				ga('send', 'event', 'menu', 'click', 'autoGild_start', 1);
 			} else {
-				$('.slider-range').slideDown();
-				$(this).html('start');
+				$(this).html('start auto degild');
 				ga('send', 'event', 'menu', 'click', 'autoGild_stop', 1);
 			}
 
