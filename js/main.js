@@ -333,6 +333,12 @@ var App = {
 
 		return false;
 	},
+	updateRecommendation: function () {
+		var hero = App.getLeastEfficientHero();
+		var $heroLi = App.getHeroLiByName( hero.name );
+		$('#heroes').find('li').removeClass('recommendation');
+		$heroLi.addClass('recommendation');
+	},
 	'start': function () {
 		var lookupSavedHero = {},
 			$heroes = $('#heroes');
@@ -528,6 +534,7 @@ var App = {
 			change: function () {
 				App.saveSliderSettings();
 				ga('send', 'event', 'slider', 'change', $(this).parent().find('.name').html(), 1);
+				App.updateRecommendation();
 			}
 		});
 
@@ -551,6 +558,7 @@ var App = {
 
 		App.loadSliderSettings();
 
+		App.updateRecommendation();
 	}
 
 };

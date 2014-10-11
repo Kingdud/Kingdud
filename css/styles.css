@@ -95,7 +95,7 @@ body
 }
 
 .degild {
-    background-color: #ff0000;
+    background-color: #ff0000 !important;
 }
 
 .gild {
@@ -232,4 +232,8 @@ body
 @-ms-keyframes fadein {
     from { opacity: 0; }
     to   { opacity: 1; }
+}
+
+.recommendation {
+    background-color: yellow;
 }
