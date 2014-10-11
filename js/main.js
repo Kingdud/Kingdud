@@ -1,5 +1,5 @@
 var App = {
-	'version': 1,
+	'version': "0.6.0",
 	'ANTI_CHEAT_CODE': 'Fe12NAfA3R6z4k0z',
 	'SALT': 'af0ik392jrmt0nsfdghy0',
 	'RAND_MAX': 2147483646,
@@ -217,19 +217,43 @@ var App = {
 
 		var $nextHeroLi = $('#heroes').find('.gild');
 
-		if ( App.nextHeroes[0].epicLevel > $nextHeroLi.find('.slider-range').val() ) {
+		if ( App.nextHeroes[0].epicLevel > $nextHeroLi.find('.slider-range').val()[1] ) {
 			return App.getHeroByName( App.nextHeroes[0].name );
 		}
 
 		App.heroes.forEach(function (hero) {
 			var $heroLi = App.getHeroLiByName( hero.name );
-			var sliderValue = $heroLi.find('.slider-range').val();
+			var sliderMax = $heroLi.find('.slider-range').val()[1];
 
-			if ( hero.epicLevel && hero.efficiency <= leastEfficientHero.efficiency && hero.epicLevel > sliderValue ) {
+			if ( hero.epicLevel && hero.efficiency <= leastEfficientHero.efficiency && hero.epicLevel > sliderMax) {
 				leastEfficientHero = hero;
 				found = true;
 			}
 		});
+
+		if (!found) {
+
+			var unsatisfiedMin = false;
+			App.heroes.forEach(function (heroMin) {
+				var $heroMinLi = App.getHeroLiByName( heroMin.name );
+				var sliderMin = $heroMinLi.find('.slider-range').val()[0];
+				if ( heroMin.epicLevel < sliderMin) {
+					unsatisfiedMin = true;
+				}
+			});
+
+			if (unsatisfiedMin) {
+				App.heroes.forEach(function (hero) {
+					var $heroLi = App.getHeroLiByName( hero.name );
+					var sliderMin = $heroLi.find('.slider-range').val()[0];
+
+					if ( hero.epicLevel && hero.efficiency <= leastEfficientHero.efficiency && (hero.epicLevel > sliderMin || sliderMin == 0 )) {
+						leastEfficientHero = hero;
+						found = true;
+					}
+				});
+			}
+		}
 
 		return (found) ? leastEfficientHero : false;
 	},
@@ -281,6 +305,33 @@ var App = {
 				ga('send', 'event', 'textarea', 'paste', 'import');
 			}, 100);
 		});
+	},
+	'saveSliderSettings': function () {
+		var sliderSettings = [];
+		App.heroes.forEach(function ( hero ) {
+			sliderSettings[ hero.id ] = App.getHeroLiByName( hero.name ).find('.slider-range').val();
+		});
+
+		localStorage[ "gilding.sliderSettings" ] = JSON.stringify(sliderSettings);
+		localStorage[ "gilding.version" ] = App.version;
+	},
+	loadSliderSettings: function () {
+		var sliderSettings = [],
+			version;
+
+		version = localStorage[ "gilding.version" ];
+
+		if ( version == App.version ) {
+			sliderSettings = JSON.parse( localStorage[ "gilding.sliderSettings" ] );
+
+			App.heroes.forEach(function ( hero ) {
+				App.getHeroLiByName( hero.name ).find('.slider-range').val( sliderSettings[ hero.id ] );
+			});
+
+			return true;
+		}
+
+		return false;
 	},
 	'start': function () {
 		var lookupSavedHero = {},
@@ -417,10 +468,10 @@ var App = {
 		App.heroes.forEach(function (hero) {
 			var $heroLi = App.getHeroLiByName( hero.name );
 			$heroLi.find('.slider-range').noUiSlider({
-				start: [ 0 ],
+				start: [ 0, 0 ],
 				step: 1,
 				range: {
-					'min': [  0 ],
+					'min': [ 0 ],
 					'max': [ App.numberOfGilds ]
 				},
 				format: {
@@ -437,37 +488,45 @@ var App = {
 				}
 			});
 		});
+		for (var j=0;j<5;j++) {
+			$heroes.find('.slider-range:eq('+j+')').val( [ 0, App.numberOfGilds ] );
+		}
 
-		$heroes.find('.slider-range:first').val( App.numberOfGilds );
+
 
 		var $sliderRange = $('.slider-range');
 
 		$sliderRange.on({
 			slide: function () {
 				var total = 0,
-					oVal = $(this).val();
+					minVal = $(this).val()[ 0 ],
+					maxVal = $(this).val()[ 1 ];
 
 				$sliderRange.not(this).each(function() {
-					total += $(this).val();
+					total += $(this).val()[ 0 ];
 				});
 
-				total += oVal;
+				total += minVal;
 				var delta = App.numberOfGilds - total;
 
 				$sliderRange.not(this).each(function() {
 
-					var new_value = $(this).val() + Math.floor(delta / (App.heroes.length - 1) );
+					var new_value = $(this).val()[0] + Math.floor(delta / (App.heroes.length - 1) );
 
-					if (new_value < 0 || oVal == App.numberOfGilds)
+					if (new_value < 0 || minVal == App.numberOfGilds)
 						new_value = 0;
 
 					if (new_value > App.numberOfGilds)
 						new_value = App.numberOfGilds;
 
-					$(this).val( new_value );
+					if (new_value > $(this).val()[1])
+						new_value = $(this).val()[1];
+
+					$(this).val( [ new_value, $(this).val()[1] ] );
 				});
 			},
 			change: function () {
+				App.saveSliderSettings();
 				ga('send', 'event', 'slider', 'change', $(this).parent().find('.name').html(), 1);
 			}
 		});
@@ -478,9 +537,20 @@ var App = {
 
 		$sliderRange.Link('lower').to('-inline-<div class="tooltip"></div>', function ( value ) {
 			$(this).html(
-				'<span>' + value + '</span>'
+				'<span>' + value + ' min</span>'
 			);
 		});
+
+		$sliderRange.Link('upper').to('-inline-<div class="tooltip"></div>', function ( value ) {
+			var v = (value==App.numberOfGilds) ? 'MAX' : value + ' max';
+			v = (value==0) ? 'NONE' : v;
+			$(this).html(
+				'<span>' + v  +'</span>'
+			);
+		});
+
+		App.loadSliderSettings();
+
 	}
 
 };

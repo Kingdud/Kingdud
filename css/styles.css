@@ -171,6 +171,18 @@ body
     left: 9px;
 }
 
+.noUi-base {
+     background-color: yellow;
+}
+
+.noUi-origin {
+    background: none repeat scroll 0 0 #fff;
+}
+
+.noUi-origin:first-child {
+    background: none repeat scroll 0 0 #1aff00;
+}
+
 .slider-range:hover .tooltip {
     display: block;
     -webkit-animation: fadein 0.3s; /* Safari, Chrome and Opera > 12.1 */
@@ -192,7 +204,7 @@ body
     position: absolute;
     text-align: center;
     top: -33px;
-    width: 50px;
+    width: 56px;
 }
 .tooltip strong {
     display: block;
