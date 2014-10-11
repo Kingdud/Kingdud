@@ -216,7 +216,6 @@ var App = {
 		var found = false;
 
 		var $nextHeroLi = $('#heroes').find('.gild');
-
 		if ( App.nextHeroes[0].epicLevel > $nextHeroLi.find('.slider-range').val()[1] ) {
 			return App.getHeroByName( App.nextHeroes[0].name );
 		}
@@ -268,6 +267,7 @@ var App = {
 		else {
 			App.autoDegild = setInterval(function () {
 				App.getHeroLiByName( App.getLeastEfficientHero().name ).click();
+				App.updateRecommendation();
 			}, App.autoDegildSpeed);
 		}
 	},
@@ -275,6 +275,7 @@ var App = {
 		clearInterval(App.autoDegild);
 		App.autoDegild = setInterval(function () {
 			App.getHeroLiByName( App.getLeastEfficientHero().name ).click();
+			App.updateRecommendation();
 		}, App.autoDegildSpeed);
 	},
 	'updateNumberOfGilds': function () {
@@ -394,6 +395,7 @@ var App = {
 							data.hero.epicLevel--;
 							App.savegame.heroSouls = App.savegame.heroSouls - 2;
 							App.updateNextHeroes();
+							App.updateRecommendation();
 							App.degilds++;
 							$("#degilds").html(App.degilds + " Heroes degilded");
 							if ( !App.autoDegild ) {
@@ -408,6 +410,7 @@ var App = {
 							data.hero.epicLevel--;
 							App.savegame.heroSouls = App.savegame.heroSouls - 2;
 							App.updateNextHeroes();
+							App.updateRecommendation();
 							App.degilds++;
 							$("#degilds").html(App.degilds + " Heroes degilded");
 							if ( !App.autoDegild ) {
@@ -444,9 +447,11 @@ var App = {
 		});
 
 		$('#autoDegilding').click(function () {
-			$('#autoDegild').slideToggle();
-			$('.slider-range').slideToggle();
-			ga('send', 'event', 'menu', 'click', 'autoGilding', 1);
+			if (! App.autoDegild) {
+				$('#autoDegild').slideToggle();
+				$('.slider-range').slideToggle();
+				ga('send', 'event', 'menu', 'click', 'autoGilding', 1);
+			}
 		});
 
 		$('#autoDegild').click(function () {
@@ -460,9 +465,10 @@ var App = {
 					$(this).html('degild faster (' + Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' per second)');
 					ga('send', 'event', 'menu', 'click', 'faster', 1);
 				});
+				$('.slider-range').slideUp();
 				ga('send', 'event', 'menu', 'click', 'autoGild_start', 1);
 			} else {
-				$('#speed').slideUp();
+				$('.slider-range').slideDown();
 				$(this).html('start');
 				ga('send', 'event', 'menu', 'click', 'autoGild_stop', 1);
 			}

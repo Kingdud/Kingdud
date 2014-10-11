@@ -237,3 +237,7 @@ body
 .recommendation {
     background-color: yellow;
 }
+
+.recommendation.gild {
+    background-color: rgb(255, 128, 0);
+}
