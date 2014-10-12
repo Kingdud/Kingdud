@@ -57,7 +57,7 @@ a {
     display: none;
 }
 
-#heroes li, #autoDegilding, #autoDegild, #speed
+#heroes li, #autoDegilding, #autoDegild, #speed, #resetSlider
 {
     -webkit-touch-callout:none;
     -webkit-user-select:none;
@@ -128,7 +128,7 @@ a {
     border-right: 5px solid transparent;
 }
 
-#autoDegilding:hover, #speed:hover, #reddit:hover {
+#autoDegilding:hover, #speed:hover, #reddit:hover, #resetSlider:hover {
     background-color: rgba(200,200,255,0.2);
 }
 
@@ -144,7 +144,7 @@ a {
     background-color: #ff0000 !important;
 }
 
-#speed {
+#speed, #resetSlider {
     display:none;
 }
 

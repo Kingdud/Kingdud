@@ -64,6 +64,7 @@ var App = {
 	'autoDegild': 0,
 	'autoDegildSpeed': 1000,
 	'degilds': 0,
+	'deGildedHeroes': [],
 	'seed': function ( seedtype, seed ) {
 		if (! App.epicHeroSeed) {
 			App.epicHeroSeed = App.savegame.epicHeroSeed;
@@ -178,16 +179,15 @@ var App = {
 	},
 	'addHero': function (hero) {
 		var $deGildedHeroes = $('#deGildedHeroes');
-		var deGildedHeroes = JSON.parse($deGildedHeroes.data('deGildedHeroes'));
-		deGildedHeroes.push(hero);
+
+		App.deGildedHeroes.push(hero);
 		$deGildedHeroes.empty();
 		if ( $deGildedHeroes.css('display') == 'none' )
 			$deGildedHeroes.fadeIn(300);
-		deGildedHeroes.forEach(function (hero) {
+		App.deGildedHeroes.forEach(function (hero) {
 			$deGildedHeroes.append($('<li>').html(hero.name));
 		});
-		$('#spentSouls').html(deGildedHeroes.length * 2 + ' Souls spent');
-		$deGildedHeroes.data('deGildedHeroes', JSON.stringify(deGildedHeroes))
+		$('#spentSouls').html(App.deGildedHeroes.length * 2 + ' Souls spent');
 	},
 	'updateNextGild': function () {
 		var $heroes = $('#heroes'),
@@ -435,7 +435,49 @@ var App = {
 			ga('send', 'event', 'menu', 'click', 'faster', 1);
 		});
 		$('.slider-range').slideUp();
+		$('#resetSlider').slideUp();
 		ga('send', 'event', 'menu', 'click', 'autoGild_start', 1);
+	},
+	resetSlider: function () {
+		var sortedHeroes = App.heroes.concat();
+
+		sortedHeroes.sort(function (a, b) {
+			if (a.efficiency > b.efficiency) {
+				return -1;
+			}
+			if (a.efficiency < b.efficiency) {
+				return 1;
+			}
+			return 0;
+		});
+
+		var i=0;
+		sortedHeroes.forEach(function (hero) {
+			var $heroLi = App.getHeroLiByName( hero.name );
+			if (i<6) {
+				$heroLi.find('.slider-range').val([0, App.numberOfGilds ]);
+			}
+			else {
+				$heroLi.find('.slider-range').val([0,0]);
+			}
+			i++;
+		});
+
+		App.saveSliderSettings();
+	},
+	'reset': function() {
+		App.degilds = 0;
+		App.geGildedHeroes = [];
+
+		App.heroesView.unbind();
+		App.infoView.unbind();
+
+		$("#degilds").html(App.degilds + " Heroes degilded");
+		$("#deGildedHeroes").empty();
+
+		App.sorting = !App.sorting;
+
+		App.start();
 	},
 	'start': function () {
 		var lookupSavedHero = {},
@@ -472,6 +514,9 @@ var App = {
 			}
 		};
 
+		App.heroSouls = App.savegame.heroSouls;
+		$("#souls").html(App.heroSouls + " Souls");
+
 		App.heroesView = rivets.bind($heroes, {
 			heroes: App.heroes,
 
@@ -485,16 +530,17 @@ var App = {
 					var hero;
 
 					if ( e.shiftKey ) {
-						while ( data.hero.epicLevel > 0 && App.savegame.heroSouls >= 2 ) {
+						while ( data.hero.epicLevel > 0 && App.heroSouls >= 2 ) {
 							hero = lookupHero[ App.getRandomGoldenHero(data.hero.id) ];
 							App.addHero(data.hero);
 							hero.epicLevel++;
 							data.hero.epicLevel--;
-							App.savegame.heroSouls = App.savegame.heroSouls - 2;
+							App.heroSouls = App.heroSouls - 2;
 							App.updateNextHeroes();
 							App.updateRecommendation();
 							App.degilds++;
 							$("#degilds").html(App.degilds + " Heroes degilded");
+							$("#souls").html(App.heroSouls + " Souls");
 							if ( !App.autoDegild ) {
 								ga('send', 'event', 'button', 'click', 'degild_' + data.hero.id, 1);
 							}
@@ -505,11 +551,12 @@ var App = {
 							App.addHero(data.hero);
 							hero.epicLevel++;
 							data.hero.epicLevel--;
-							App.savegame.heroSouls = App.savegame.heroSouls - 2;
+							App.heroSouls = App.heroSouls - 2;
 							App.updateNextHeroes();
 							App.updateRecommendation();
 							App.degilds++;
 							$("#degilds").html(App.degilds + " Heroes degilded");
+							$("#souls").html(App.heroSouls + " Souls");
 							if ( !App.autoDegild ) {
 								ga('send', 'event', 'heroes', 'click', 'degild_' + data.hero.id, 1);
 							}
@@ -545,7 +592,13 @@ var App = {
 
 		$('#autoDegilding').click(function () {
 			$('.slider-range').slideToggle();
+			$('#resetSlider').slideToggle();
 			ga('send', 'event', 'menu', 'click', 'editPriorities', 1);
+		});
+
+		$('#resetSlider').click(function () {
+			App.resetSlider();
+			ga('send', 'event', 'menu', 'click', 'resetSlider', 1);
 		});
 
 		$('#autoDegild').click(function () {
@@ -580,10 +633,6 @@ var App = {
 				}
 			});
 		});
-
-		for ( var j = 0; j < 6; j++ ) {
-			$heroes.find('.slider-range:eq(' + j + ')').val([ 0, App.numberOfGilds ]);
-		}
 
 		var $sliderRange = $('.slider-range');
 
