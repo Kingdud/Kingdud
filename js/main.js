@@ -1,5 +1,5 @@
 var App = {
-	'version': "0.6.10",
+	'version': "0.6.11",
 	'ANTI_CHEAT_CODE': 'Fe12NAfA3R6z4k0z',
 	'SALT': 'af0ik392jrmt0nsfdghy0',
 	'RAND_MAX': 2147483646,
@@ -405,6 +405,9 @@ var App = {
 			});
 
 			return true;
+		}
+		else {
+			App.resetSlider();
 		}
 
 		return false;
