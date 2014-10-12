@@ -389,15 +389,18 @@ var App = {
 		});
 
 		localStorage[ "gilding.sliderSettings" ] = JSON.stringify(sliderSettings);
+		localStorage[ "gilding.souls" ] = App.heroSouls;
 		localStorage[ "gilding.version" ] = App.version;
 	},
 	loadSliderSettings: function () {
 		var sliderSettings = [],
-			version;
+			version,
+			souls;
 
 		version = localStorage[ "gilding.version" ];
+		souls = localStorage[ "gilding.souls" ];
 
-		if ( version == App.version ) {
+		if ( version == App.version && App.heroSouls == souls) {
 			sliderSettings = JSON.parse(localStorage[ "gilding.sliderSettings" ]);
 
 			App.heroes.forEach(function (hero) {
