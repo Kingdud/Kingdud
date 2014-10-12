@@ -505,7 +505,7 @@ var App = {
 				}
 			});
 		});
-		for (var j=0;j<5;j++) {
+		for (var j=0;j<6;j++) {
 			$heroes.find('.slider-range:eq('+j+')').val( [ 0, App.numberOfGilds ] );
 		}
 
