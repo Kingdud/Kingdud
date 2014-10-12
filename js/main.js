@@ -31,11 +31,68 @@ var App = {
 		{ id: 25, name: "Grant, the General", epicLevel: 0, efficiency: 1.562e61 / 1686 },
 		{ id: 26, name: "Frostleaf", epicLevel: 0, efficiency: 1.107e63 / 1657 }
 	],
+	'ancients': [
+		{name: "Solomon, Ancient of Wisdom", id: 3},
+		{name: "Libertas, Ancient of Freedom", id: 4},
+		{name: "Siyalatas, Ancient of Abandon", id: 5},
+		{name: "Khrysos, Ancient of Inheritence", id: 6},
+		{name: "Thusia, Ancient of Vaults", id: 6},
+		{name: "Mammon, Ancient of Greed", id: 8},
+		{name: "Mimzee, Ancient of Riches", id: 9},
+		{name: "Pluto, Ancient of Wealth", id: 10},
+		{name: "Dogcog, Ancient of Thrift", id: 11},
+		{name: "Fortuna, Ancient of Chance", id: 12},
+		{name: "Atman, Ancient of Souls", id: 13},
+		{name: "Dora, Ancient of Discovery", id: 14},
+		{name: "Bhaal, Ancient of Murder", id: 15},
+		{name: "Morgulis, Ancient of Death", id: 16},
+		{name: "Chronos, Ancient of Time", id: 17},
+		{name: "Bubos, Ancient of Diseases", id: 18},
+		{name: "Fragsworth, Ancient of Wrath", id: 19},
+		{name: "Vaagur, Ancient of Impatience", id: 20},
+		{name: "Kumawakamaru, Ancient of Shadows", id: 21},
+		{name: "Chawedo, Ancient of Agitation", id: 22},
+		{name: "Hecatoncheir, Ancient of Wallops", id: 23},
+		{name: "Berserker, Ancient of Rage", id: 24},
+		{name: "Sniperino, Ancient of Accuracy", id: 25},
+		{name: "Kleptos, Ancient of Thieves", id: 26},
+		{name: "Energon, Ancient of Battery Life", id: 27},
+		{name: "Argaiv, Ancient of Enhancement", id: 28}
+	],
 	'nextHeroes': [],
 	'sorting': false,
 	'autoDegild': 0,
 	'autoDegildSpeed': 1000,
 	'degilds': 0,
+	'seed': function ( seedtype, seed ) {
+		if (! App.epicHeroSeed) {
+			App.epicHeroSeed = App.savegame.epicHeroSeed;
+		}
+		if (! App.ancientsSeed) {
+			App.ancientsSeed = App.savegame.ancients.ancientsRoller.seed;
+			App.ancientsSeedUses = App.savegame.ancients.ancientsRoller.numUses;
+		}
+		switch ( seedtype) {
+			case "epicHero":
+				if (! seed) {
+					return App.epicHeroSeed
+				}
+				else {
+					App.epicHeroSeed = seed;
+				}
+				break;
+			case "ancients":
+				if (! seed) {
+					return App.ancientsSeed
+				}
+				else {
+					App.ancientsSeed = seed;
+				}
+				break;
+			default:
+		}
+
+	},
 	'fromAntiCheatFormat': function (string) {
 		var elements = string.split(App.ANTI_CHEAT_CODE);
 		var data = App.unSprinkle(elements[ 0 ]);
@@ -67,30 +124,30 @@ var App = {
 		if ( antiCheatCodeExist ) string = App.fromAntiCheatFormat(string);
 		return atob(string);
 	},
-	'rand': function () {
-		App.savegame.epicHeroSeed = App.savegame.epicHeroSeed * 16807 % (App.RAND_MAX + 1);
-		return App.savegame.epicHeroSeed;
+	'rand': function ( seedType ) {
+		App.seed( seedType, App.seed( seedType ) * 16807 % (App.RAND_MAX + 1) );
+		return App.seed( seedType );
 	},
-	'range': function (min, max) {
-		return App.rand() % (max - min + 1) + min;
+	'range': function (seedType, min, max) {
+		return App.rand( seedType ) % (max - min + 1) + min;
 	},
-	'integer': function (min, max) {
+	'integer': function (seedType, min, max) {
 		if ( isNaN(max) ) {
 			max = min;
 			min = 0;
 		}
 
-		return Math.floor(App.range(min, max));
+		return Math.floor(App.range(seedType, min, max));
 	},
 	'getRandomGoldenHero': function (startingHeroId) {
 		var heroId = startingHeroId;
 		while ( heroId == startingHeroId ) {
-			heroId = App.integer(2, 26);
+			heroId = App.integer('epicHero', 2, 26);
 		}
 		return heroId;
 	},
 	'getNextHeroes': function (max) {
-		var seed = App.savegame.epicHeroSeed;
+		var seed = App.epicHeroSeed;
 		var lookupHero = {};
 
 		for ( var j = 0; j < App.heroes.length; j++ ) {
@@ -101,7 +158,7 @@ var App = {
 		for ( var i = 0; i < max; i++ ) {
 			nextHeroes[ i ] = lookupHero[ App.getRandomGoldenHero() ];
 		}
-		App.savegame.epicHeroSeed = seed;
+		App.epicHeroSeed = seed;
 
 		return nextHeroes;
 	},
@@ -214,6 +271,16 @@ var App = {
 	'getLeastEfficientHero': function () {
 		var leastEfficientHero = App.heroes[ 5 ];
 		var found = false;
+		var remaining = 0;
+
+		App.heroes.forEach(function (hero) {
+			var $heroLi = App.getHeroLiByName(hero.name);
+			var sliderMin = $heroLi.find('.slider-range').val()[ 0 ];
+			var sliderMax = $heroLi.find('.slider-range').val()[ 1 ];
+			if (hero.epicLevel < sliderMin || hero.epicLevel > sliderMax) {
+				remaining= remaining + hero.epicLevel;
+			}
+		});
 
 		var $nextHeroLi = $('#heroes').find('.gild');
 		if ( App.nextHeroes[ 0 ].epicLevel > $nextHeroLi.find('.slider-range').val()[ 1 ] ) {
@@ -221,10 +288,19 @@ var App = {
 		}
 
 		App.heroes.forEach(function (hero) {
+			var upcoming = false;
+
+			for (var i=0;i<remaining;i++) {
+				if (hero.name == App.nextHeroes[i].name) {
+					upcoming = true;
+				}
+			}
+
+
 			var $heroLi = App.getHeroLiByName(hero.name);
 			var sliderMax = $heroLi.find('.slider-range').val()[ 1 ];
 
-			if ( hero.epicLevel && hero.efficiency <= leastEfficientHero.efficiency && hero.epicLevel > sliderMax ) {
+			if ( hero.epicLevel && hero.epicLevel > sliderMax && hero.efficiency <= leastEfficientHero.efficiency && !upcoming ) {
 				leastEfficientHero = hero;
 				found = true;
 			}
