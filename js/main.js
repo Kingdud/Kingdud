@@ -336,17 +336,22 @@ var App = {
 		$heroLi.addClass('recommendation');
 	},
 	stopAutoDegild: function () {
+		var $autoDegild = $('#autoDegild');
 		clearInterval(App.autoDegild);
 		App.autoDegild = 0;
-		$('#autoDegild').html('start auto degild');
+
+		$autoDegild.html('start auto degild');
+		$autoDegild.toggleClass("stop", App.autoDegild);
 		ga('send', 'event', 'menu', 'click', 'autoGild_stop', 1);
 	},
 	startAutoDegild: function () {
+		var $autoDegild = $('#autoDegild');
+		$autoDegild.toggleClass("stop", App.autoDegild);
 		App.autoDegild = setInterval(function () {
 			App.getHeroLiByName( App.getLeastEfficientHero().name ).click();
 			App.updateRecommendation();
 		}, App.autoDegildSpeed);
-		$('#autoDegild').html('stop auto degild');
+		$autoDegild.html('stop auto degild');
 		$('#speed').slideDown().click(function () {
 			App.autoDegildSpeed = Math.round(App.autoDegildSpeed * 0.9);
 			App.updateAutoDegild();
@@ -468,13 +473,11 @@ var App = {
 		});
 
 		$('#autoDegild').click(function () {
-			$(this).toggleClass("stop", App.autoDegild);
 			if ( App.autoDegild ) {
 				App.stopAutoDegild();
 			} else {
 				App.startAutoDegild();
 			}
-
 		});
 
 		App.updateNumberOfGilds();
