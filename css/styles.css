@@ -177,15 +177,15 @@ a {
 }
 
 .noUi-base {
-     background-color: yellow;
+     background-color: #1aff00;
 }
 
 .noUi-origin {
-    background: none repeat scroll 0 0 #fff;
+    background: none repeat scroll 0 0 #ff0000;
 }
 
 .noUi-origin:first-child {
-    background: none repeat scroll 0 0 #1aff00;
+    background: none repeat scroll 0 0 yellow;
 }
 
 .slider-range:hover .tooltip {
