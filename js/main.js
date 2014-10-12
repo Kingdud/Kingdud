@@ -259,23 +259,18 @@ var App = {
 	'getHeroLiByName': function ( name ) {
 		return $('#heroes').find("li .name:contains('" + name + "')").parent();
 	},
-	'toggleAutoDegild': function () {
-		if ( App.autoDegild ) {
-			clearInterval(App.autoDegild);
-			App.autoDegild = 0;
-		}
-		else {
-			App.autoDegild = setInterval(function () {
-				App.getHeroLiByName( App.getLeastEfficientHero().name ).click();
-				App.updateRecommendation();
-			}, App.autoDegildSpeed);
-		}
-	},
 	'updateAutoDegild': function () {
 		clearInterval(App.autoDegild);
 		App.autoDegild = setInterval(function () {
-			App.getHeroLiByName( App.getLeastEfficientHero().name ).click();
-			App.updateRecommendation();
+			var leastEfficientHero = App.getLeastEfficientHero();
+			if (leastEfficientHero) {
+				App.getHeroLiByName( leastEfficientHero.name ).click();
+				App.updateRecommendation();
+			}
+			else {
+				App.stopAutoDegild();
+			}
+
 		}, App.autoDegildSpeed);
 	},
 	'updateNumberOfGilds': function () {
@@ -339,6 +334,27 @@ var App = {
 		var $heroLi = App.getHeroLiByName( hero.name );
 		$('#heroes').find('li').removeClass('recommendation');
 		$heroLi.addClass('recommendation');
+	},
+	stopAutoDegild: function () {
+		clearInterval(App.autoDegild);
+		App.autoDegild = 0;
+		$('#autoDegild').html('start auto degild');
+		ga('send', 'event', 'menu', 'click', 'autoGild_stop', 1);
+	},
+	startAutoDegild: function () {
+		App.autoDegild = setInterval(function () {
+			App.getHeroLiByName( App.getLeastEfficientHero().name ).click();
+			App.updateRecommendation();
+		}, App.autoDegildSpeed);
+		$('#autoDegild').html('stop auto degild');
+		$('#speed').slideDown().click(function () {
+			App.autoDegildSpeed = Math.round(App.autoDegildSpeed * 0.9);
+			App.updateAutoDegild();
+			$(this).html('degild faster (' + Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' per second)');
+			ga('send', 'event', 'menu', 'click', 'faster', 1);
+		});
+		$('.slider-range').slideUp();
+		ga('send', 'event', 'menu', 'click', 'autoGild_start', 1);
 	},
 	'start': function () {
 		var lookupSavedHero = {},
@@ -452,21 +468,11 @@ var App = {
 		});
 
 		$('#autoDegild').click(function () {
-			App.toggleAutoDegild();
 			$(this).toggleClass("stop", App.autoDegild);
 			if ( App.autoDegild ) {
-				$(this).html('stop auto degild');
-				$('#speed').slideDown().click(function () {
-					App.autoDegildSpeed = Math.round(App.autoDegildSpeed * 0.9);
-					App.updateAutoDegild();
-					$(this).html('degild faster (' + Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' per second)');
-					ga('send', 'event', 'menu', 'click', 'faster', 1);
-				});
-				$('.slider-range').slideUp();
-				ga('send', 'event', 'menu', 'click', 'autoGild_start', 1);
+				App.stopAutoDegild();
 			} else {
-				$(this).html('start auto degild');
-				ga('send', 'event', 'menu', 'click', 'autoGild_stop', 1);
+				App.startAutoDegild();
 			}
 
 		});
