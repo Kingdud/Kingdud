@@ -55,7 +55,7 @@ var App = {
 	},
 	'getHash': function (string) {
 		var characters = [];
-		characters[0] = string;
+		characters[ 0 ] = string;
 		characters.sort();
 		var sortedCharacters = characters.join();
 		return CryptoJS.MD5(sortedCharacters + App.SALT);
@@ -216,37 +216,37 @@ var App = {
 		var found = false;
 
 		var $nextHeroLi = $('#heroes').find('.gild');
-		if ( App.nextHeroes[0].epicLevel > $nextHeroLi.find('.slider-range').val()[1] ) {
-			return App.getHeroByName( App.nextHeroes[0].name );
+		if ( App.nextHeroes[ 0 ].epicLevel > $nextHeroLi.find('.slider-range').val()[ 1 ] ) {
+			return App.getHeroByName(App.nextHeroes[ 0 ].name);
 		}
 
 		App.heroes.forEach(function (hero) {
-			var $heroLi = App.getHeroLiByName( hero.name );
-			var sliderMax = $heroLi.find('.slider-range').val()[1];
+			var $heroLi = App.getHeroLiByName(hero.name);
+			var sliderMax = $heroLi.find('.slider-range').val()[ 1 ];
 
-			if ( hero.epicLevel && hero.efficiency <= leastEfficientHero.efficiency && hero.epicLevel > sliderMax) {
+			if ( hero.epicLevel && hero.efficiency <= leastEfficientHero.efficiency && hero.epicLevel > sliderMax ) {
 				leastEfficientHero = hero;
 				found = true;
 			}
 		});
 
-		if (!found) {
+		if ( !found ) {
 
 			var unsatisfiedMin = false;
 			App.heroes.forEach(function (heroMin) {
-				var $heroMinLi = App.getHeroLiByName( heroMin.name );
-				var sliderMin = $heroMinLi.find('.slider-range').val()[0];
-				if ( heroMin.epicLevel < sliderMin) {
+				var $heroMinLi = App.getHeroLiByName(heroMin.name);
+				var sliderMin = $heroMinLi.find('.slider-range').val()[ 0 ];
+				if ( heroMin.epicLevel < sliderMin ) {
 					unsatisfiedMin = true;
 				}
 			});
 
-			if (unsatisfiedMin) {
+			if ( unsatisfiedMin ) {
 				App.heroes.forEach(function (hero) {
-					var $heroLi = App.getHeroLiByName( hero.name );
-					var sliderMin = $heroLi.find('.slider-range').val()[0];
+					var $heroLi = App.getHeroLiByName(hero.name);
+					var sliderMin = $heroLi.find('.slider-range').val()[ 0 ];
 
-					if ( hero.epicLevel && hero.efficiency <= leastEfficientHero.efficiency && (hero.epicLevel > sliderMin || sliderMin == 0 )) {
+					if ( hero.epicLevel && hero.efficiency <= leastEfficientHero.efficiency && (hero.epicLevel > sliderMin || sliderMin == 0 ) ) {
 						leastEfficientHero = hero;
 						found = true;
 					}
@@ -256,15 +256,15 @@ var App = {
 
 		return (found) ? leastEfficientHero : false;
 	},
-	'getHeroLiByName': function ( name ) {
+	'getHeroLiByName': function (name) {
 		return $('#heroes').find("li .name:contains('" + name + "')").parent();
 	},
 	'updateAutoDegild': function () {
 		clearInterval(App.autoDegild);
 		App.autoDegild = setInterval(function () {
 			var leastEfficientHero = App.getLeastEfficientHero();
-			if (leastEfficientHero) {
-				App.getHeroLiByName( leastEfficientHero.name ).click();
+			if ( leastEfficientHero ) {
+				App.getHeroLiByName(leastEfficientHero.name).click();
 				App.updateRecommendation();
 			}
 			else {
@@ -275,8 +275,8 @@ var App = {
 	},
 	'updateNumberOfGilds': function () {
 		App.numberOfGilds = 0;
-		App.heroes.forEach(function ( hero ) {
-			if (hero.epicLevel > 0)
+		App.heroes.forEach(function (hero) {
+			if ( hero.epicLevel > 0 )
 				App.numberOfGilds += hero.epicLevel;
 		})
 		$("#gildies").html(App.numberOfGilds + " gilded Heroes");
@@ -304,8 +304,8 @@ var App = {
 	},
 	'saveSliderSettings': function () {
 		var sliderSettings = [];
-		App.heroes.forEach(function ( hero ) {
-			sliderSettings[ hero.id ] = App.getHeroLiByName( hero.name ).find('.slider-range').val();
+		App.heroes.forEach(function (hero) {
+			sliderSettings[ hero.id ] = App.getHeroLiByName(hero.name).find('.slider-range').val();
 		});
 
 		localStorage[ "gilding.sliderSettings" ] = JSON.stringify(sliderSettings);
@@ -318,10 +318,10 @@ var App = {
 		version = localStorage[ "gilding.version" ];
 
 		if ( version == App.version ) {
-			sliderSettings = JSON.parse( localStorage[ "gilding.sliderSettings" ] );
+			sliderSettings = JSON.parse(localStorage[ "gilding.sliderSettings" ]);
 
-			App.heroes.forEach(function ( hero ) {
-				App.getHeroLiByName( hero.name ).find('.slider-range').val( sliderSettings[ hero.id ] );
+			App.heroes.forEach(function (hero) {
+				App.getHeroLiByName(hero.name).find('.slider-range').val(sliderSettings[ hero.id ]);
 			});
 
 			return true;
@@ -331,7 +331,7 @@ var App = {
 	},
 	updateRecommendation: function () {
 		var hero = App.getLeastEfficientHero();
-		var $heroLi = App.getHeroLiByName( hero.name );
+		var $heroLi = App.getHeroLiByName(hero.name);
 		$('#heroes').find('li').removeClass('recommendation');
 		$heroLi.addClass('recommendation');
 	},
@@ -348,7 +348,7 @@ var App = {
 		var $autoDegild = $('#autoDegild');
 		$autoDegild.toggleClass("stop", App.autoDegild);
 		App.autoDegild = setInterval(function () {
-			App.getHeroLiByName( App.getLeastEfficientHero().name ).click();
+			App.getHeroLiByName(App.getLeastEfficientHero().name).click();
 			App.updateRecommendation();
 		}, App.autoDegildSpeed);
 		$autoDegild.html('stop auto degild');
@@ -483,7 +483,7 @@ var App = {
 		App.updateNumberOfGilds();
 
 		App.heroes.forEach(function (hero) {
-			var $heroLi = App.getHeroLiByName( hero.name );
+			var $heroLi = App.getHeroLiByName(hero.name);
 			$heroLi.find('.slider-range').noUiSlider({
 				start: [ 0, 0 ],
 				step: 1,
@@ -492,24 +492,22 @@ var App = {
 					'max': [ App.numberOfGilds ]
 				},
 				format: {
-					to: function ( value ) {
+					to: function (value) {
 						return value;
 					},
-					from: function ( value ) {
+					from: function (value) {
 						return value;
 					}
 				},
-				slide: function(event, ui) {
-
+				slide: function (event, ui) {
 
 				}
 			});
 		});
-		for (var j=0;j<6;j++) {
-			$heroes.find('.slider-range:eq('+j+')').val( [ 0, App.numberOfGilds ] );
+
+		for ( var j = 0; j < 6; j++ ) {
+			$heroes.find('.slider-range:eq(' + j + ')').val([ 0, App.numberOfGilds ]);
 		}
-
-
 
 		var $sliderRange = $('.slider-range');
 
@@ -519,27 +517,27 @@ var App = {
 					minVal = $(this).val()[ 0 ],
 					maxVal = $(this).val()[ 1 ];
 
-				$sliderRange.not(this).each(function() {
+				$sliderRange.not(this).each(function () {
 					total += $(this).val()[ 0 ];
 				});
 
 				total += minVal;
 				var delta = App.numberOfGilds - total;
 
-				$sliderRange.not(this).each(function() {
+				$sliderRange.not(this).each(function () {
 
-					var new_value = $(this).val()[0] + Math.floor(delta / (App.heroes.length - 1) );
+					var new_value = $(this).val()[ 0 ] + Math.floor(delta / (App.heroes.length - 1));
 
-					if (new_value < 0 || minVal == App.numberOfGilds)
+					if ( new_value < 0 || minVal == App.numberOfGilds )
 						new_value = 0;
 
-					if (new_value > App.numberOfGilds)
+					if ( new_value > App.numberOfGilds )
 						new_value = App.numberOfGilds;
 
-					if (new_value > $(this).val()[1])
-						new_value = $(this).val()[1];
+					if ( new_value > $(this).val()[ 1 ] )
+						new_value = $(this).val()[ 1 ];
 
-					$(this).val( [ new_value, $(this).val()[1] ] );
+					$(this).val([ new_value, $(this).val()[ 1 ] ]);
 				});
 			},
 			change: function () {
@@ -549,21 +547,21 @@ var App = {
 			}
 		});
 
-		$sliderRange.click(function(event){
+		$sliderRange.click(function (event) {
 			event.stopPropagation();
 		});
 
-		$sliderRange.Link('lower').to('-inline-<div class="tooltip"></div>', function ( value ) {
+		$sliderRange.Link('lower').to('-inline-<div class="tooltip"></div>', function (value) {
 			$(this).html(
 				'<span>' + value + ' min</span>'
 			);
 		});
 
-		$sliderRange.Link('upper').to('-inline-<div class="tooltip"></div>', function ( value ) {
-			var v = (value==App.numberOfGilds) ? 'MAX' : value + ' max';
-			v = (value==0) ? 'NONE' : v;
+		$sliderRange.Link('upper').to('-inline-<div class="tooltip"></div>', function (value) {
+			var v = (value == App.numberOfGilds) ? 'MAX' : value + ' max';
+			v = (value == 0) ? 'NONE' : v;
 			$(this).html(
-				'<span>' + v  +'</span>'
+				'<span>' + v + '</span>'
 			);
 		});
 

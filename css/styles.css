@@ -8,6 +8,11 @@ body
     text-shadow:0 0 5px #000;
 }
 
+a {
+    color:#fff;
+    text-decoration: none;
+}
+
 #import {
     margin:20px 0 0 20px;
 }
@@ -123,7 +128,7 @@ body
     border-right: 5px solid transparent;
 }
 
-#autoDegilding:hover, #speed:hover {
+#autoDegilding:hover, #speed:hover, #reddit:hover {
     background-color: rgba(200,200,255,0.2);
 }
 
