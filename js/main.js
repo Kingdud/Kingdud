@@ -282,6 +282,10 @@ var App = {
 			}
 		});
 
+		if (remaining >= App.nextHeroes.length) {
+			remaining = App.nextHeroes.length - 1;
+		}
+
 		var $nextHeroLi = $('#heroes').find('.gild');
 		if ( App.nextHeroes[ 0 ].epicLevel > $nextHeroLi.find('.slider-range').val()[ 1 ] ) {
 			return App.getHeroByName(App.nextHeroes[ 0 ].name);
