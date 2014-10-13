@@ -1,5 +1,5 @@
 var App = {
-	'version': "0.7.1",
+	'version': "0.7.2",
 	'ANTI_CHEAT_CODE': 'Fe12NAfA3R6z4k0z',
 	'SALT': 'af0ik392jrmt0nsfdghy0',
 	'RAND_MAX': 2147483646,
@@ -431,11 +431,12 @@ var App = {
 	},
 	'stopAutoDegild': function () {
 		var $autoDegild = $('#autoDegild');
+
 		clearInterval(App.autoDegild);
 		App.autoDegild = 0;
 
 		$autoDegild.html('start auto degild');
-		$autoDegild.toggleClass("stop", App.autoDegild);
+		$autoDegild.removeClass("stop");
 
 		$('#speedFaster').slideUp();
 		$('#speedSlower').slideUp();
@@ -445,7 +446,7 @@ var App = {
 	},
 	'startAutoDegild': function () {
 		var $autoDegild = $('#autoDegild');
-		$autoDegild.toggleClass("stop", App.autoDegild);
+		$autoDegild.addClass("stop");
 		App.autoDegild = setInterval(function () {
 			App.getHeroLiByName(App.getLeastEfficientHero().name).click();
 			App.updateRecommendation();
