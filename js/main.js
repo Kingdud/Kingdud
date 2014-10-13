@@ -1,5 +1,5 @@
 var App = {
-	'version': "0.7.3",
+	'version': "0.7.4",
 	'ANTI_CHEAT_CODE': 'Fe12NAfA3R6z4k0z',
 	'SALT': 'af0ik392jrmt0nsfdghy0',
 	'RAND_MAX': 2147483646,
@@ -274,7 +274,8 @@ var App = {
 	'getLeastEfficientHero': function () {
 		var leastEfficientHero = App.heroes[ 5 ];
 		var found = false;
-		var remaining = 0;
+		var remaining = 0,
+			potentialHero = false;
 
 		App.heroes.forEach(function (hero) {
 			var $heroLi = App.getHeroLiByName(hero.name);
@@ -294,6 +295,7 @@ var App = {
 			return App.getHeroByName(App.nextHeroes[ 0 ].name);
 		}
 
+		var allUpcoming = true;
 		App.heroes.forEach(function (hero) {
 			var upcoming = false;
 
@@ -303,15 +305,26 @@ var App = {
 				}
 			}
 
-
 			var $heroLi = App.getHeroLiByName(hero.name);
 			var sliderMax = $heroLi.find('.slider-range').val()[ 1 ];
 
-			if ( hero.epicLevel && hero.epicLevel > sliderMax && hero.efficiency <= leastEfficientHero.efficiency && !upcoming ) {
-				leastEfficientHero = hero;
-				found = true;
+			if ( hero.epicLevel && hero.epicLevel > sliderMax && hero.efficiency <= leastEfficientHero.efficiency ) {
+				if (!upcoming) {
+					leastEfficientHero = hero;
+					found = true;
+					allUpcoming = false;
+				}
+				else {
+					potentialHero = hero;
+				}
+
 			}
 		});
+
+		if (potentialHero && allUpcoming) {
+			found = true;
+			leastEfficientHero = potentialHero;
+		}
 
 		if ( !found ) {
 
@@ -690,24 +703,27 @@ var App = {
 					total += $(this).val()[ 0 ];
 				});
 
-				total += minVal;
-				var delta = App.numberOfGilds - total;
+				//total += minVal;
+				if ( (total + minVal) > App.numberOfGilds) {
+					$(this).val( [ App.numberOfGilds - total, maxVal ] );
+				}
+				//var delta = App.numberOfGilds - total;
 
-				$sliderRange.not(this).each(function () {
-
-					var new_value = $(this).val()[ 0 ] + Math.floor(delta / (App.heroes.length - 1));
-
-					if ( new_value < 0 || minVal == App.numberOfGilds )
-						new_value = 0;
-
-					if ( new_value > App.numberOfGilds )
-						new_value = App.numberOfGilds;
-
-					if ( new_value > $(this).val()[ 1 ] )
-						new_value = $(this).val()[ 1 ];
-
-					$(this).val([ new_value, $(this).val()[ 1 ] ]);
-				});
+				//$sliderRange.not(this).each(function () {
+				//
+				//	var new_value = $(this).val()[ 0 ] + Math.floor(delta / (App.heroes.length - 1));
+				//
+				//	if ( new_value < 0 || minVal == App.numberOfGilds )
+				//		new_value = 0;
+				//
+				//	if ( new_value > App.numberOfGilds )
+				//		new_value = App.numberOfGilds;
+				//
+				//	if ( new_value > $(this).val()[ 1 ] )
+				//		new_value = $(this).val()[ 1 ];
+				//
+				//	$(this).val([ new_value, $(this).val()[ 1 ] ]);
+				//});
 			},
 			change: function () {
 				App.saveSliderSettings();
@@ -739,11 +755,11 @@ var App = {
 		App.updateRecommendation();
 
 		$('#speedFaster').click(function () {
-			if (App.autoDegildSpeed<20) {
+			if (App.autoDegildSpeed<50) {
 				App.autoDegildSpeed++;
 			}
 			else {
-				App.autoDegildSpeed=20;
+				App.autoDegildSpeed=50;
 			}
 			App.updateAutoDegild();
 			$('#degildsPerSecond').html(App.autoDegildSpeed + ' degild(s) per second').slideDown();
