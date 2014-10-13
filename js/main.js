@@ -62,7 +62,7 @@ var App = {
 	'nextHeroes': [],
 	'sorting': false,
 	'autoDegild': 0,
-	'autoDegildSpeed': 1000,
+	'autoDegildSpeed': 1,
 	'degilds': 0,
 	'deGildedHeroes': [],
 	'originalSouls': 0,
@@ -357,7 +357,7 @@ var App = {
 				App.stopAutoDegild();
 			}
 
-		}, App.autoDegildSpeed);
+		}, 1000 / App.autoDegildSpeed);
 	},
 	'updateNumberOfGilds': function () {
 		App.numberOfGilds = 0;
@@ -450,24 +450,13 @@ var App = {
 		App.autoDegild = setInterval(function () {
 			App.getHeroLiByName(App.getLeastEfficientHero().name).click();
 			App.updateRecommendation();
-		}, App.autoDegildSpeed);
+		}, 1000 / App.autoDegildSpeed);
 		$autoDegild.html('stop auto degild');
 
-		$('#degildsPerSecond').html(Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' degilds per second').slideDown();
+		$('#degildsPerSecond').html(App.autoDegildSpeed + ' degild(s) per second').slideDown();
+		$('#speedFaster').slideDown();
+		$('#speedSlower').slideDown();
 
-		$('#speedFaster').click(function () {
-			App.autoDegildSpeed = Math.round(App.autoDegildSpeed * 0.9);
-			App.updateAutoDegild();
-			$('#degildsPerSecond').html(Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' degilds per second').slideDown();
-			ga('send', 'event', 'menu', 'click', 'faster', 1);
-		}).slideDown();
-
-		$('#speedSlower').click(function () {
-			App.autoDegildSpeed = Math.round(App.autoDegildSpeed * 1.1);
-			App.updateAutoDegild();
-			$('#degildsPerSecond').html(Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' degilds per second').slideDown();
-			ga('send', 'event', 'menu', 'click', 'slower', 1);
-		}).slideDown();
 
 		ga('send', 'event', 'menu', 'click', 'autoGild_start', 1);
 	},
@@ -505,6 +494,7 @@ var App = {
 		App.degilds = 0;
 		App.deGildedHeroes = [];
 		App.heroSouls = App.originalSouls;
+		App.autoDegildSpeed = 1;
 
 		$("#degilds").html(App.degilds + " Heroes degilded");
 		$("#deGildedHeroes").empty();
@@ -747,6 +737,30 @@ var App = {
 		App.loadSliderSettings();
 
 		App.updateRecommendation();
+
+		$('#speedFaster').click(function () {
+			if (App.autoDegildSpeed<20) {
+				App.autoDegildSpeed++;
+			}
+			else {
+				App.autoDegildSpeed=20;
+			}
+			App.updateAutoDegild();
+			$('#degildsPerSecond').html(App.autoDegildSpeed + ' degild(s) per second').slideDown();
+			ga('send', 'event', 'menu', 'click', 'faster', 1);
+		});
+
+		$('#speedSlower').click(function () {
+			if (App.autoDegildSpeed>1) {
+				App.autoDegildSpeed--;
+			}
+			else {
+				App.autoDegildSpeed=1;
+			}
+			App.updateAutoDegild();
+			$('#degildsPerSecond').html(App.autoDegildSpeed + ' degild(s) per second').slideDown();
+			ga('send', 'event', 'menu', 'click', 'slower', 1);
+		});
 	}
 
 };
