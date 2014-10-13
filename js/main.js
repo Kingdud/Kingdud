@@ -65,6 +65,7 @@ var App = {
 	'autoDegildSpeed': 1000,
 	'degilds': 0,
 	'deGildedHeroes': [],
+	'originalSouls': 0,
 	'seed': function ( seedtype, seed ) {
 		if (! App.epicHeroSeed) {
 			App.epicHeroSeed = App.savegame.epicHeroSeed;
@@ -333,6 +334,9 @@ var App = {
 				});
 			}
 		}
+		if (! found) {
+			App.stopAutoDegild();
+		}
 
 		return (found) ? leastEfficientHero : false;
 	},
@@ -367,6 +371,7 @@ var App = {
 			$deGildedHeroes.empty();
 			$deGildedHeroes.data('deGildedHeroes', JSON.stringify([]));
 			App.savegame = JSON.parse(App.decode($('#input').val()));
+			App.originalSeed = App.savegame.epicHeroSeed;
 			App.start();
 			ga('send', 'event', 'button', 'click', 'import');
 		});
@@ -392,7 +397,7 @@ var App = {
 		localStorage[ "gilding.souls" ] = App.heroSouls;
 		localStorage[ "gilding.version" ] = App.version;
 	},
-	loadSliderSettings: function () {
+	'loadSliderSettings': function () {
 		var sliderSettings = [],
 			version,
 			souls;
@@ -415,22 +420,27 @@ var App = {
 
 		return false;
 	},
-	updateRecommendation: function () {
+	'updateRecommendation': function () {
 		var hero = App.getLeastEfficientHero();
 		var $heroLi = App.getHeroLiByName(hero.name);
 		$('#heroes').find('li').removeClass('recommendation');
 		$heroLi.addClass('recommendation');
 	},
-	stopAutoDegild: function () {
+	'stopAutoDegild': function () {
 		var $autoDegild = $('#autoDegild');
 		clearInterval(App.autoDegild);
 		App.autoDegild = 0;
 
 		$autoDegild.html('start auto degild');
 		$autoDegild.toggleClass("stop", App.autoDegild);
+
+		$('#speedFaster').slideUp();
+		$('#speedSlower').slideUp();
+		$('#degildsPerSecond').slideUp();
+
 		ga('send', 'event', 'menu', 'click', 'autoGild_stop', 1);
 	},
-	startAutoDegild: function () {
+	'startAutoDegild': function () {
 		var $autoDegild = $('#autoDegild');
 		$autoDegild.toggleClass("stop", App.autoDegild);
 		App.autoDegild = setInterval(function () {
@@ -438,17 +448,26 @@ var App = {
 			App.updateRecommendation();
 		}, App.autoDegildSpeed);
 		$autoDegild.html('stop auto degild');
-		$('#speed').slideDown().click(function () {
+
+		$('#degildsPerSecond').html(Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' degilds per second').slideDown();
+
+		$('#speedFaster').click(function () {
 			App.autoDegildSpeed = Math.round(App.autoDegildSpeed * 0.9);
 			App.updateAutoDegild();
-			$(this).html('degild faster (' + Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' per second)');
+			$('#degildsPerSecond').html(Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' degilds per second').slideDown();
 			ga('send', 'event', 'menu', 'click', 'faster', 1);
-		});
-		$('.slider-range').slideUp();
-		$('#resetSlider').slideUp();
+		}).slideDown();
+
+		$('#speedSlower').click(function () {
+			App.autoDegildSpeed = Math.round(App.autoDegildSpeed * 1.1);
+			App.updateAutoDegild();
+			$('#degildsPerSecond').html(Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' degilds per second').slideDown();
+			ga('send', 'event', 'menu', 'click', 'slower', 1);
+		}).slideDown();
+
 		ga('send', 'event', 'menu', 'click', 'autoGild_start', 1);
 	},
-	resetSlider: function () {
+	'resetSlider': function () {
 		var sortedHeroes = App.heroes.concat();
 
 		sortedHeroes.sort(function (a, b) {
@@ -476,25 +495,37 @@ var App = {
 		App.saveSliderSettings();
 	},
 	'reset': function() {
-		App.degilds = 0;
-		App.geGildedHeroes = [];
 
-		App.heroesView.unbind();
-		App.infoView.unbind();
+		App.stopAutoDegild();
+
+		App.degilds = 0;
+		App.deGildedHeroes = [];
+		App.heroSouls = App.originalSouls;
 
 		$("#degilds").html(App.degilds + " Heroes degilded");
 		$("#deGildedHeroes").empty();
 
-		App.sorting = !App.sorting;
+		App.seed('epicHero', App.originalSeed);
 
-		App.start();
+		for (var i= 0;i<App.heroes.length;i++) {
+			App.heroes[i].epicLevel = App.originalHeroes[i].epicLevel;
+		}
+
+		$("#souls").html(App.heroSouls + " Souls");
+		$('#spentSouls').html(App.deGildedHeroes.length * 2 + ' Souls spent');
+		$('#degildsPerSecond').html(Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' degilds per second');
+
+		App.updateNextHeroes();
+		App.updateRecommendation();
 	},
 	'start': function () {
 		var lookupSavedHero = {},
 			$heroes = $('#heroes');
 
 		$('.list, .floater').show();
+
 		$('#import').hide();
+
 		var savedHeroes = $.map(App.savegame.heroCollection.heroes, function (value) {
 			return [ value ];
 		});
@@ -506,6 +537,8 @@ var App = {
 		App.heroes.forEach(function (hero) {
 			hero.epicLevel = lookupSavedHero[ hero.id ].epicLevel;
 		});
+
+		App.originalHeroes = JSON.parse( JSON.stringify( App.heroes ) );
 
 		App.updateNextHeroes();
 
@@ -525,6 +558,8 @@ var App = {
 		};
 
 		App.heroSouls = App.savegame.heroSouls;
+		App.originalSouls = App.savegame.heroSouls;
+
 		$("#souls").html(App.heroSouls + " Souls");
 
 		App.heroesView = rivets.bind($heroes, {
@@ -609,6 +644,11 @@ var App = {
 		$('#resetSlider').click(function () {
 			App.resetSlider();
 			ga('send', 'event', 'menu', 'click', 'resetSlider', 1);
+		});
+
+		$('#reset').click(function () {
+			App.reset();
+			ga('send', 'event', 'menu', 'click', 'reset', 1);
 		});
 
 		$('#autoDegild').click(function () {
