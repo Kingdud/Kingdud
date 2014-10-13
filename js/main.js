@@ -1,5 +1,5 @@
 var App = {
-	'version': "0.7.0",
+	'version': "0.7.1",
 	'ANTI_CHEAT_CODE': 'Fe12NAfA3R6z4k0z',
 	'SALT': 'af0ik392jrmt0nsfdghy0',
 	'RAND_MAX': 2147483646,
@@ -66,6 +66,8 @@ var App = {
 	'degilds': 0,
 	'deGildedHeroes': [],
 	'originalSouls': 0,
+	'originalSeed': 0,
+	'originalHeroes': [],
 	'seed': function ( seedtype, seed ) {
 		if (! App.epicHeroSeed) {
 			App.epicHeroSeed = App.savegame.epicHeroSeed;
@@ -382,6 +384,7 @@ var App = {
 				$deGildedHeroes.empty();
 				$deGildedHeroes.data('deGildedHeroes', JSON.stringify([]));
 				App.savegame = JSON.parse(App.decode($('#input').val()));
+				App.originalSeed = App.savegame.epicHeroSeed;
 				App.start();
 				ga('send', 'event', 'textarea', 'paste', 'import');
 			}, 100);
