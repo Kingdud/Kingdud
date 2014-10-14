@@ -5,31 +5,31 @@ var App = {
 	'RAND_MAX': 2147483646,
 	'savegame': [],
 	'heroes': [
-		{ id: 2, name: "Tree Beast", epicLevel: 0, efficiency: 2.484e63 / 2541 },
-		{ id: 3, name: "Ivan, the Drunken Brawler", epicLevel: 0, efficiency: 5.530e63 / 2529 },
-		{ id: 4, name: "Brittany, the Beach Princess", epicLevel: 0, efficiency: 7.501e63 / 2513 },
-		{ id: 5, name: "The Wandering Fisherman", epicLevel: 0, efficiency: 3.212e61 / 2412 },
-		{ id: 6, name: "Betty Clicker", epicLevel: 0, efficiency: 8.903e55 / 2199 },
-		{ id: 7, name: "The Masked Samurai", epicLevel: 0, efficiency: 1.056e64 / 2450 },
-		{ id: 8, name: "Leon", epicLevel: 0, efficiency: 2.012e61 / 2337 },
-		{ id: 9, name: "The Great Forest Seer", epicLevel: 0, efficiency: 3.736e63 / 2387 },
-		{ id: 10, name: "Alexa, the Assassin", epicLevel: 0, efficiency: 3.173e59 / 2222 },
-		{ id: 11, name: "Natalia, Ice Apprentice", epicLevel: 0, efficiency: 6.228e62 / 2306 },
-		{ id: 12, name: "Mercedes, Duchess of Blades", epicLevel: 0, efficiency: 2.052e62 / 2259 },
-		{ id: 13, name: "Bobby, Bounty Hunter", epicLevel: 0, efficiency: 4.364e61 / 2205 },
-		{ id: 14, name: "Broyle Lindoven, Fire Mage", epicLevel: 0, efficiency: 8.683e58 / 2083 },
-		{ id: 15, name: "Sir George II, Kings Guard", epicLevel: 0, efficiency: 8.899e60 / 2119 },
-		{ id: 16, name: "King Midas", epicLevel: 0, efficiency: 8.061e52 / 1813 },
-		{ id: 17, name: "Referi Jerator, Ice Wizard", epicLevel: 0, efficiency: 1.604e61 / 2063 },
-		{ id: 18, name: "Abaddon", epicLevel: 0, efficiency: 5.978e59 / 1982 },
-		{ id: 19, name: "Ma Zhu", epicLevel: 0, efficiency: 2.553e61 / 2006 },
-		{ id: 20, name: "Amenhotep", epicLevel: 0, efficiency: 1.752e55 / 1764 },
-		{ id: 21, name: "Beastlord", epicLevel: 0, efficiency: 1.914e59 / 1864 },
-		{ id: 22, name: "Athena, Goddess of War", epicLevel: 0, efficiency: 6.560e61 / 1900 },
-		{ id: 23, name: "Aphrodite, Goddess of Love", epicLevel: 0, efficiency: 3.822e62 / 1872 },
-		{ id: 24, name: "Shinatobe, Wind Deity", epicLevel: 0, efficiency: 2.830e61 / 1779 },
-		{ id: 25, name: "Grant, the General", epicLevel: 0, efficiency: 1.562e61 / 1686 },
-		{ id: 26, name: "Frostleaf", epicLevel: 0, efficiency: 1.107e63 / 1657 }
+		{ id: 2, name: "Tree Beast", epicLevel: 0, efficiency: 2.484e63 / 2541, baseCost: 50 },
+		{ id: 3, name: "Ivan, the Drunken Brawler", epicLevel: 0, efficiency: 5.530e63 / 2529, baseCost: 250 },
+		{ id: 4, name: "Brittany, the Beach Princess", epicLevel: 0, efficiency: 7.501e63 / 2513, baseCost: 1000 },
+		{ id: 5, name: "The Wandering Fisherman", epicLevel: 0, efficiency: 3.212e61 / 2412, baseCost: 4000 },
+		{ id: 6, name: "Betty Clicker", epicLevel: 0, efficiency: 8.903e55 / 2199, baseCost: 20000 },
+		{ id: 7, name: "The Masked Samurai", epicLevel: 0, efficiency: 1.056e64 / 2450, baseCost: 100e3 },
+		{ id: 8, name: "Leon", epicLevel: 0, efficiency: 2.012e61 / 2337, baseCost: 400e3 },
+		{ id: 9, name: "The Great Forest Seer", epicLevel: 0, efficiency: 3.736e63 / 2387, baseCost: 2500e3 },
+		{ id: 10, name: "Alexa, the Assassin", epicLevel: 0, efficiency: 3.173e59 / 2222, baseCost: 15000e3 },
+		{ id: 11, name: "Natalia, Ice Apprentice", epicLevel: 0, efficiency: 6.228e62 / 2306, baseCost: 100e6 },
+		{ id: 12, name: "Mercedes, Duchess of Blades", epicLevel: 0, efficiency: 2.052e62 / 2259, baseCost: 800e6 },
+		{ id: 13, name: "Bobby, Bounty Hunter", epicLevel: 0, efficiency: 4.364e61 / 2205, baseCost: 6500e6 },
+		{ id: 14, name: "Broyle Lindoven, Fire Mage", epicLevel: 0, efficiency: 8.683e58 / 2083, baseCost: 50e9 },
+		{ id: 15, name: "Sir George II, Kings Guard", epicLevel: 0, efficiency: 8.899e60 / 2119, baseCost: 450e9 },
+		{ id: 16, name: "King Midas", epicLevel: 0, efficiency: 8.061e52 / 1813, baseCost: 3017e6 },
+		{ id: 17, name: "Referi Jerator, Ice Wizard", epicLevel: 0, efficiency: 1.604e61 / 2063, baseCost: 36e12 },
+		{ id: 18, name: "Abaddon", epicLevel: 0, efficiency: 5.978e59 / 1982, baseCost: 320e12 },
+		{ id: 19, name: "Ma Zhu", epicLevel: 0, efficiency: 2.553e61 / 2006, baseCost: 2.7e15 },
+		{ id: 20, name: "Amenhotep", epicLevel: 0, efficiency: 1.752e55 / 1764, baseCost: 24e15 },
+		{ id: 21, name: "Beastlord", epicLevel: 0, efficiency: 1.914e59 / 1864, baseCost: 300e15 },
+		{ id: 22, name: "Athena, Goddess of War", epicLevel: 0, efficiency: 6.560e61 / 1900, baseCost: 9e18 },
+		{ id: 23, name: "Aphrodite, Goddess of Love", epicLevel: 0, efficiency: 3.822e62 / 1872, baseCost: 350e18 },
+		{ id: 24, name: "Shinatobe, Wind Deity", epicLevel: 0, efficiency: 2.830e61 / 1779, baseCost: 14e21 },
+		{ id: 25, name: "Grant, the General", epicLevel: 0, efficiency: 1.562e61 / 1686, baseCost: 4199e21 },
+		{ id: 26, name: "Frostleaf", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 2100e24 }
 	],
 	'ancients': [
 		{name: "Solomon, Ancient of Wisdom", id: 3},
@@ -456,6 +456,7 @@ var App = {
 		$('#degildsPerSecond').slideUp();
 
 		ga('send', 'event', 'menu', 'click', 'autoGild_stop', 1);
+		ga('send', 'event', 'app', 'log', 'degilded', App.degilds);
 	},
 	'startAutoDegild': function () {
 		var $autoDegild = $('#autoDegild');
@@ -521,9 +522,82 @@ var App = {
 		$("#souls").html(App.heroSouls + " Souls");
 		$('#spentSouls').html(App.deGildedHeroes.length * 2 + ' Souls spent');
 		$('#degildsPerSecond').html(Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' degilds per second');
+		$('#dps').html(App.beautify(App.dps) + ' dps / ' + "100%");
 
 		App.updateNextHeroes();
 		App.updateRecommendation();
+	},
+	'getHeroSoulWorldDamageBonus': function () {
+		App.ancientsDps = 0;
+		if (App.savegame.ancients.ancients[16]) {
+			App.ancientsDps = App.savegame.ancients.ancients[16].level * 11;
+		}
+
+		return App.heroSouls * 10 + App.ancientsDps;
+	},
+	'heroDps': function (hero)
+	{
+		return hero.baseAttack() * hero.level * hero.damageMultiplier * App.allDpsMultiplier * ((App.getHeroSoulWorldDamageBonus() / 100 + 1) * hero.getEpicBonus());
+	},
+	'formatEveryThirdPower': function (notations) {
+		return function (value) {
+			var base = 0,
+				notationValue = '';
+			if ( value >= 1000000 && isFinite(value) ) {
+				value /= 1000;
+				while ( Math.round(value) >= 1000 ) {
+					value /= 1000;
+					base++;
+				}
+				if ( base > notations.length ) {
+					return 'Infinity';
+				} else {
+					notationValue = notations[ base ];
+				}
+			}
+			return ( Math.round(value * 1000) / 1000 ) + notationValue;
+		};
+	},
+	'beautify': function (value,floats) {
+		var negative=(value<0);
+		var decimal='';
+		if (value<1000000 && floats>0) decimal='.'+(value.toFixed(floats).toString()).split('.')[1];
+		value=Math.floor(Math.abs(value));
+		var formatter=App.formatEveryThirdPower([
+			'',
+			't',
+			'M',
+			'B',
+			'T',
+			'q',
+			'Q',
+			's',
+			'S',
+			'O',
+			'N',
+			'd',
+			'U',
+			'D',
+			'!',
+			'@',
+			'#',
+			'$',
+			'%',
+			'^',
+			'&',
+			'*'
+		]);
+		var output=formatter(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
+		return negative?'-'+output:output+decimal;
+	},
+	getDps: function () {
+		var dps = 0;
+
+		App.heroes.forEach(function (hero) {
+			dps += App.heroDps( hero );
+		});
+
+		return dps;
 	},
 	'start': function () {
 		var lookupSavedHero = {},
@@ -543,7 +617,27 @@ var App = {
 
 		App.heroes.forEach(function (hero) {
 			hero.epicLevel = lookupSavedHero[ hero.id ].epicLevel;
+			hero.level = lookupSavedHero[ hero.id ].level;
+			hero.damageMultiplier = lookupSavedHero[ hero.id ].damageMultiplier;
+			hero.baseAttack = function () {
+				if(this.id == 1)
+				{
+					return 0;
+				}
+				return Math.ceil(this.baseCost / 10 * Math.pow(1 - 0.0188 * Math.min( this.id, 14), this.id));
+			};
+			hero.getEpicBonus = function () {
+				App.gildedDamageBonusPercent = 0;
+
+				if (App.savegame.ancients.ancients[16]) {
+					App.gildedDamageBonusPercent = App.savegame.ancients[18].level * 2;
+				}
+
+				return 1 + this.epicLevel * (0.5 + App.gildedDamageBonusPercent * 0.01);
+			}
 		});
+
+		App.allDpsMultiplier = App.savegame.allDpsMultiplier;
 
 		App.originalHeroes = JSON.parse( JSON.stringify( App.heroes ) );
 
@@ -591,8 +685,13 @@ var App = {
 							App.updateNextHeroes();
 							App.updateRecommendation();
 							App.degilds++;
+
+							App.dps2 = App.getDps();
+							$('#dps').html(App.beautify(App.dps2) + ' dps / ' + Math.round(App.dps2 / App.dps * 100) + "%");
+
 							$("#degilds").html(App.degilds + " Heroes degilded");
 							$("#souls").html(App.heroSouls + " Souls");
+
 							if ( !App.autoDegild ) {
 								ga('send', 'event', 'button', 'click', 'degild_' + data.hero.id, 1);
 							}
@@ -607,6 +706,10 @@ var App = {
 							App.updateNextHeroes();
 							App.updateRecommendation();
 							App.degilds++;
+
+							App.dps2 = App.getDps();
+							$('#dps').html(App.beautify(App.dps2) + ' dps / ' + Math.round(App.dps2 / App.dps * 100) + "%");
+
 							$("#degilds").html(App.degilds + " Heroes degilded");
 							$("#souls").html(App.heroSouls + " Souls");
 							if ( !App.autoDegild ) {
@@ -777,6 +880,11 @@ var App = {
 			$('#degildsPerSecond').html(App.autoDegildSpeed + ' degild(s) per second').slideDown();
 			ga('send', 'event', 'menu', 'click', 'slower', 1);
 		});
+
+		App.dps = App.getDps();
+		$('#dps').html(App.beautify(App.dps) + ' dps / ' + "100%");
+
+		ga('send', 'event', 'app', 'log', 'started');
 	}
 
 };
