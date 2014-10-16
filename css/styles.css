@@ -69,6 +69,10 @@ a {
     cursor: pointer;
 }
 
+#nextHeroes {
+    overflow: hidden;
+}
+
 #input {
     overflow: hidden;
     background-color:rgba(200,200,255,0.1);

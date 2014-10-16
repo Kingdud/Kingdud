@@ -1,5 +1,5 @@
 var App = {
-	'version': "0.9.0",
+	'version': "0.9.1",
 	'savegame': {
 		'heroCollection': []
 	},
@@ -112,14 +112,13 @@ var App = {
 		return nextHeroes;
 	},
 	'updateNextHeroes': function () {
-		var nextHeroes = App.getNextHeroes(25);
 
-		App.nextHeroes = nextHeroes;
+		App.nextHeroes = App.getNextHeroes(100);
 
 		var $nextHeroes = $('#nextHeroes');
-
 		$nextHeroes.empty();
-		nextHeroes.forEach(function (hero) {
+
+		App.nextHeroes.forEach(function (hero) {
 			$nextHeroes.append( $('<li>').html( hero.name ) );
 		});
 
@@ -206,89 +205,90 @@ var App = {
 		}
 	},
 	'getLeastEfficientHero': function () {
-		var leastEfficientHero = App.heroes[ 5 ];
-		var found = false;
-		var remaining = 0,
-			potentialHero = false;
-
-		App.heroes.forEach(function (hero) {
-			var $heroLi = App.getHeroLiByName(hero.name);
-
-			var sliderMin = $heroLi.find('.slider-range').val()[ 0 ];
-			var sliderMax = $heroLi.find('.slider-range').val()[ 1 ];
-			if ( hero.epicLevel < sliderMin || hero.epicLevel > sliderMax ) {
-				remaining = remaining + hero.epicLevel;
-			}
-		});
-
-		if ( remaining >= App.nextHeroes.length ) {
-			remaining = App.nextHeroes.length - 1;
-		}
-
 		var $nextHeroLi = $('#heroes').find('.gild');
+
 		if ( App.nextHeroes[ 0 ].epicLevel > $nextHeroLi.find('.slider-range').val()[ 1 ] ) {
-			return App.getHeroByName(App.nextHeroes[ 0 ].name);
+			return App.getHeroById( App.nextHeroes[ 0 ].id );
 		}
 
-		var allUpcoming = true;
-		App.heroes.forEach(function (hero) {
-			var upcoming = false;
+		var potentialHeroes = App.heroes.filter( function ( hero ) {
+			return hero.epicLevel > App.getHeroLiByName( hero.name).find('.slider-range').val()[ 1 ];
+		});
 
-			for ( var i = 0; i < remaining; i++ ) {
-				if ( hero.name == App.nextHeroes[ i ].name ) {
-					upcoming = true;
-				}
+		potentialHeroes.sort(function ( a, b ) {
+			var aEff = a.efficiency,
+				bEff = b.efficiency,
+				aLvl = a.epicLevel,
+				bLvl = b.epicLevel;
+
+			if(aLvl == bLvl) {
+				return (aEff < bEff) ? 1 : (aEff > bEff) ? -1 : 0;
 			}
-
-			var $heroLi = App.getHeroLiByName(hero.name);
-			var sliderMax = $heroLi.find('.slider-range').val()[ 1 ];
-
-			if ( hero.epicLevel && hero.epicLevel > sliderMax && hero.efficiency <= leastEfficientHero.efficiency ) {
-				if ( !upcoming ) {
-					leastEfficientHero = hero;
-					found = true;
-					allUpcoming = false;
-				}
-				else {
-					potentialHero = hero;
-				}
-
+			else {
+				return (aLvl < bLvl) ? 1 : -1;
 			}
 		});
 
-		if ( potentialHero && allUpcoming ) {
-			found = true;
-			leastEfficientHero = potentialHero;
+		var lookAhead = 0;
+		potentialHeroes.forEach(function ( hero) {
+			lookAhead += hero.epicLevel - App.getHeroLiByName( hero.name).find('.slider-range').val()[ 1 ];
+		});
+
+		if (lookAhead > App.nextHeroes.length) {
+			lookAhead = App.nextHeroes.length;
 		}
 
-		if ( !found ) {
-
-			var unsatisfiedMin = false;
-			App.heroes.forEach(function (heroMin) {
-				var $heroMinLi = App.getHeroLiByName(heroMin.name);
-				var sliderMin = $heroMinLi.find('.slider-range').val()[ 0 ];
-				if ( heroMin.epicLevel < sliderMin ) {
-					unsatisfiedMin = true;
+		var notUpcomingHeroes = potentialHeroes.filter(function ( hero ) {
+			for (var i=0;i< lookAhead; i++) {
+				if ( hero.name == App.nextHeroes[i].name) {
+					return false;
 				}
+			}
+
+			return true;
+		});
+
+		if (notUpcomingHeroes.length != 0) {
+			potentialHeroes = notUpcomingHeroes;
+		}
+
+		if (potentialHeroes.length > 0) {
+			return potentialHeroes[0];
+		}
+		else {
+			var unsatisfiedHeroes = App.heroes.filter(function (hero) {
+				var $heroLi = App.getHeroLiByName(hero.name);
+				var sliderMin = $heroLi.find('.slider-range').val()[ 0 ];
+				return hero.epicLevel < sliderMin;
 			});
 
-			if ( unsatisfiedMin ) {
-				App.heroes.forEach(function (hero) {
+			if ( unsatisfiedHeroes.length > 0 ) {
+				potentialHeroes = App.heroes.filter(function (hero) {
 					var $heroLi = App.getHeroLiByName(hero.name);
 					var sliderMin = $heroLi.find('.slider-range').val()[ 0 ];
+					return hero.epicLevel && (hero.epicLevel > sliderMin || sliderMin == 0 )
+				}).sort(function ( a, b ) {
+					var aEff = a.efficiency,
+						bEff = b.efficiency,
+						aLvl = a.epicLevel,
+						bLvl = b.epicLevel;
 
-					if ( hero.epicLevel && hero.efficiency <= leastEfficientHero.efficiency && (hero.epicLevel > sliderMin || sliderMin == 0 ) ) {
-						leastEfficientHero = hero;
-						found = true;
+					if(aLvl == bLvl) {
+						return (aEff < bEff) ? 1 : (aEff > bEff) ? -1 : 0;
+					}
+					else {
+						return (aLvl < bLvl) ? 1 : -1;
 					}
 				});
 			}
 		}
-		if ( !found ) {
+
+		if ( potentialHeroes.length == 0 ) {
 			App.stopAutoDegild();
 		}
-
-		return (found) ? leastEfficientHero : false;
+		else {
+			return potentialHeroes[0];
+		}
 	},
 	'getHeroLiByName': function (name) {
 		return $('#heroes').find("li .name:contains('" + name + "')").parent();
@@ -316,7 +316,7 @@ var App = {
 			setTimeout(function () {
 				App.start();
 				ga('send', 'event', 'app', 'import', 'paste');
-			}, 100);
+			}, 250);
 		});
 
 		$('#sort').click(function () {
@@ -413,9 +413,11 @@ var App = {
 	},
 	'updateRecommendation': function () {
 		var hero = App.getLeastEfficientHero();
-		var $heroLi = App.getHeroLiByName(hero.name);
 		$('#heroes').find('li').removeClass('recommendation');
-		$heroLi.addClass('recommendation');
+		if (hero) {
+			var $heroLi = App.getHeroLiByName(hero.name);
+			$heroLi.addClass('recommendation');
+		}
 	},
 	'startAutoDegild': function () {
 		var $autoDegild = $('#autoDegild');
@@ -761,7 +763,8 @@ var App = {
 		$('#import').hide();
 		$('.list').show();
 
-		$('#deGildedHeroes').height($('#nextHeroes').height());
+
+		$('#nextHeroes, #deGildedHeroes').height($('#heroes').height());
 
 		ga('send', 'event', 'app', 'log', 'started');
 	}
