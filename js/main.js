@@ -1,5 +1,5 @@
 var App = {
-	'version': "0.9.2",
+	'version': "0.9.3",
 	'savegame': {
 		'heroCollection': []
 	},
@@ -790,5 +790,14 @@ var App = {
 };
 
 $(function () {
+	window.onerror = function(message, file, line) {
+		ga('send', 'exception', {
+			'exDescription': file + "(" + line + "): " + message,
+			'exFatal': true,
+			'appName': 'CHGC',
+			'appVersion': '0.9.3'
+		});
+	};
+
 	App.init();
 });
