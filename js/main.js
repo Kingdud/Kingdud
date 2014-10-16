@@ -703,7 +703,7 @@ var App = {
 				'deGild': function (e, data) {
 					if (!App.editing || App.autoDegild) {
 						if ( e.shiftKey ) {
-							while ( data.hero.epicLevel > 0 && App.heroSouls >= 2 ) {
+							while ( data.hero.epicLevel > 0 ) {
 								App.degildHero( data.hero );
 							}
 						} else {
