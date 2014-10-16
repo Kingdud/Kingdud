@@ -1,5 +1,5 @@
 var App = {
-	'version': "0.9.1",
+	'version': "0.9.2",
 	'savegame': {
 		'heroCollection': []
 	},
@@ -526,8 +526,17 @@ var App = {
 	},
 	'getHeroSoulWorldDamageBonus': function () {
 		var ancientsDps = 0;
-		if ( App.savegame.ancients.ancients[ 16 ] ) {
-			ancientsDps = App.savegame.ancients.ancients[ 16 ].level * 11;
+		var ancients = [];
+		var savedAncients = $.map(App.savegame.ancients.ancients, function (value) {
+			return [ value ];
+		});
+
+		savedAncients.forEach(function (ancient) {
+			ancients[ancient.id] = ancient;
+		});
+
+		if ( ancients[ 16 ] ) {
+			ancientsDps = ancients[ 16 ].level * 11;
 		}
 
 		return App.heroSouls * 10 + ancientsDps;
@@ -616,8 +625,17 @@ var App = {
 			hero.getEpicBonus = function () {
 				App.gildedDamageBonusPercent = 0;
 
-				if ( App.savegame.ancients.ancients[ 16 ] ) {
-					App.gildedDamageBonusPercent = App.savegame.ancients[ 18 ].level * 2;
+				var ancients = [];
+				var savedAncients = $.map(App.savegame.ancients.ancients, function (value) {
+					return [ value ];
+				});
+
+				savedAncients.forEach(function (ancient) {
+					ancients[ancient.id] = ancient;
+				});
+
+				if ( ancients[28] ) {
+					App.gildedDamageBonusPercent = ancients[28].level * 2;
 				}
 
 				return 1 + this.epicLevel * (0.5 + App.gildedDamageBonusPercent * 0.01);
