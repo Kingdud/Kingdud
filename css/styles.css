@@ -57,7 +57,7 @@ a {
     display: none;
 }
 
-#heroes li, #autoDegilding, #autoDegild, #speedFaster, #speedSlower, #resetSlider, #reset
+#heroes li, #editPriorities, #autoDegild, #speedFaster, #speedSlower, #resetSlider, #reset
 {
     -webkit-touch-callout:none;
     -webkit-user-select:none;
@@ -128,7 +128,7 @@ a {
     border-right: 5px solid transparent;
 }
 
-#autoDegilding:hover, #speedFaster:hover, #speedSlower:hover, #reddit:hover, #resetSlider:hover, #reset:hover {
+#editPriorities:hover, #speedFaster:hover, #speedSlower:hover, #reddit:hover, #resetSlider:hover, #reset:hover {
     background-color: rgba(200,200,255,0.2);
 }
 
