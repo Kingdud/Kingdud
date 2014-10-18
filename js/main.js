@@ -791,6 +791,7 @@ var App = {
 
 $(function () {
 	window.onerror = function(message, file, line) {
+		ga('send', 'event', 'app', 'exception', file + "(" + line + "): " + message);
 		ga('send', 'exception', {
 			'exDescription': file + "(" + line + "): " + message,
 			'exFatal': true,
