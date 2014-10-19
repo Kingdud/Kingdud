@@ -1,5 +1,5 @@
 var App = {
-	'version': "0.9.3",
+	'version': "0.10.0",
 	'savegame': {
 		'heroCollection': []
 	},
@@ -75,6 +75,7 @@ var App = {
 	'dps': 0,
 	'dps2': 0,
 	'editing': false,
+	'stats': [],
 	'rand': function () {
 		App.epicHeroSeed = App.epicHeroSeed * 16807 % 2147483647;
 
@@ -506,9 +507,11 @@ var App = {
 		App.deGildedHeroes = [];
 		App.heroSouls = App.originalSouls;
 		App.autoDegildSpeed = 1;
+		App.stats = [{ dps:100, degilds:0}];
 
 		$("#degilds").html(App.degilds + " Heroes degilded");
 		$("#deGildedHeroes").empty();
+		$("#stats").slideUp();
 
 		App.epicHeroSeed = App.originalSeed;
 
@@ -691,6 +694,107 @@ var App = {
 			});
 		});
 	},
+	'createChart': function () {
+		var margin = {top: 20, right: 10, bottom: 30, left: 35},
+			width = 275 - margin.left - margin.right,
+			height = 275 - margin.top - margin.bottom;
+
+		var x = d3.scale.linear()
+			.range([0, height]);
+
+		var y = d3.scale.linear()
+			.range([height, 0]);
+
+		var xAxis = d3.svg.axis()
+			.scale(x)
+			.orient("bottom")
+			.tickFormat(d3.format("d"));
+
+		var yAxis = d3.svg.axis()
+			.scale(y)
+			.orient("left")
+			.tickFormat(d3.format("d"));
+
+		var line = d3.svg.line()
+			.x(function(d) { return x(d.degilds); })
+			.y(function(d) { return y(d.dps); });
+
+		App.svg = d3.select("#stats").append("svg")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+			.append("g")
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		x.domain(d3.extent(App.stats, function(d) { return d.degilds; }));
+		y.domain(d3.extent(App.stats, function(d) { return d.dps; }));
+
+		App.svg.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + height + ")")
+			.call(xAxis)
+			.append("text")
+			.style("text-anchor", "end")
+			.attr("x", width -5)
+			.attr("dy", "-.71em")
+			.text("Degilds");
+
+		App.svg.append("g")
+			.attr("class", "y axis")
+			.call(yAxis)
+			.append("text")
+			.attr("transform", "rotate(-90)")
+			.attr("y", 6)
+			.attr("dy", ".71em")
+			.style("text-anchor", "end")
+			.text("% DPS");
+
+		App.svg.append("path")
+			.datum(App.stats)
+			.attr("class", "line")
+			.attr("d", line);
+	},
+	updateChart: function () {
+		$("#stats").slideDown();
+		var margin = {top: 20, right: 10, bottom: 30, left: 35},
+			width = 275 - margin.left - margin.right,
+			height = 275 - margin.top - margin.bottom;
+
+		var x = d3.scale.linear()
+			.range([0, height]);
+
+		var y = d3.scale.linear()
+			.range([height, 0]);
+		//
+		var xAxis = d3.svg.axis()
+			.scale(x)
+			.orient("bottom")
+			.tickFormat(d3.format("d"));
+
+		var yAxis = d3.svg.axis()
+			.scale(y)
+			.orient("left")
+			.tickFormat(d3.format("d"));
+
+		var line = d3.svg.line()
+			.x(function(d) { return x(d.degilds); })
+			.y(function(d) { return y(d.dps); });
+
+		App.svg.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		x.domain(d3.extent(App.stats, function(d) { return d.degilds; }));
+		y.domain(d3.extent(App.stats, function(d) { return d.dps; }));
+
+		App.svg.select("g.x.axis")
+			.call(xAxis);
+
+		App.svg.select("g.y.axis")
+			.call(yAxis);
+
+		App.svg.select("path.line")
+			.datum(App.stats)
+			.attr("d", line);
+
+	},
 	degildHero: function (hero) {
 		if ( hero.epicLevel > 0 ) {
 			var nextHero = App.getHeroById(App.getRandomGoldenHero(hero.id));
@@ -714,6 +818,13 @@ var App = {
 				ga('send', 'event', 'button', 'click', 'degild_' + hero.id, 1);
 			}
 		}
+
+		App.stats.push({
+			dps: Math.round(App.dps2 / App.dps * 100),
+			degilds: App.degilds
+		});
+
+		App.updateChart();
 	},
 	bindUI: function () {
 		var $heroes = $('#heroes');
@@ -783,6 +894,13 @@ var App = {
 
 
 		$('#nextHeroes, #deGildedHeroes').height($('#heroes').height());
+
+		App.stats.push({
+			dps: 100,
+			degilds: 0
+		});
+
+		App.createChart();
 
 		ga('send', 'event', 'app', 'log', 'started');
 	}

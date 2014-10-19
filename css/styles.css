@@ -250,3 +250,29 @@ a {
 .recommendation.gild {
     background-color: rgb(255, 128, 0);
 }
+
+#stats {
+    display: none;
+}
+
+svg {
+    fill: #ffffff;
+
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #fff;
+    shape-rendering: crispEdges;
+}
+
+.x.axis path {
+    /*display: none;*/
+}
+
+.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
