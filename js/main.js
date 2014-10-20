@@ -303,10 +303,56 @@ var App = {
 
 		return numberOfGilds;
 	},
-	getSavegame: function () {
+	'getHash': function ( data ) {
+		return CryptoJS.MD5( data + "af0ik392jrmt0nsfdghy0").toString();
+	},
+	'sprinkle': function ( data ) {
+		var _loc2_ = data.split("");
+		var _loc3_ = [];
+		var _loc4_ = 0;
+		var _loc5_ = null;
+		while(_loc4_ < _loc2_.length)
+		{
+			_loc3_[_loc4_ * 2] = _loc2_[_loc4_];
+			_loc5_ = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+			_loc3_[_loc4_ * 2 + 1] = _loc5_.substr(Math.floor(Math.random() * (_loc5_.length - 1)),1);
+			_loc4_++;
+		}
+		return _loc3_.join("");
+	},
+	'toAntiCheatFormat': function( data ) {
+		var sprinkledData = App.sprinkle( data );
+		var splitter = 'Fe12NAfA3R6z4k0z';
+		var hash = App.getHash( data );
+
+		return sprinkledData + splitter + hash;
+	},
+	'getSavegame': function () {
 		return JSON.parse(atob($('#input').val().split('Fe12NAfA3R6z4k0z')[ 0 ].replace(/(.)./g, "$1")));
 	},
-	initializeEventHandlers: function () {
+	'exportSavegame': function () {
+		if (App.heroSouls > 0) {
+			var savegame = App.getSavegame();
+
+			for (var key in savegame.heroCollection.heroes) {
+				if (savegame.heroCollection.heroes.hasOwnProperty(key)) {
+					var hero = App.getHeroById( savegame.heroCollection.heroes[ key ].id);
+					if (hero) {
+						savegame.heroCollection.heroes[ key ].epicLevel = hero.epicLevel;
+					}
+				}
+			}
+
+			savegame.heroSouls = App.heroSouls;
+			savegame.epicHeroSeed = App.epicHeroSeed;
+
+			var enc=App.toAntiCheatFormat( btoa(JSON.stringify(savegame)) );
+			var dataUri = 'data:application/text,' + enc;
+
+			$('#export').find('a').attr('href', dataUri).attr('download', 'CHGCSave.txt').attr('textContent', 'CHGCSave.txt');
+		}
+	},
+	'initializeEventHandlers': function () {
 
 		$('#importButton').click(function () {
 			App.start();
@@ -377,6 +423,13 @@ var App = {
 			$('#degildsPerSecond').html(App.autoDegildSpeed + ' degild(s) per second').slideDown();
 
 			ga('send', 'event', 'menu', 'click', 'slower', 1);
+		});
+
+		$('#export').click(function () {
+
+			App.exportSavegame();
+
+			ga('send', 'event', 'menu', 'click', 'export', 1);
 		});
 	},
 	'saveSliderSettings': function () {
@@ -523,6 +576,7 @@ var App = {
 		$('#spentSouls').html(App.deGildedHeroes.length * 2 + ' Souls spent');
 		$('#degildsPerSecond').html(Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' degilds per second');
 		$('#dps').html(App.beautify(App.dps) + ' dps / ' + "100%");
+		$('#export').slideDown();
 
 		App.updateNextHeroes();
 		App.updateRecommendation();
@@ -817,6 +871,13 @@ var App = {
 			if ( !App.autoDegild ) {
 				ga('send', 'event', 'button', 'click', 'degild_' + hero.id, 1);
 			}
+		}
+
+		if (App.heroSouls > 0) {
+			$('#export').slideDown();
+		}
+		else {
+			$('#export').slideUp();
 		}
 
 		App.stats.push({

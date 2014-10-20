@@ -152,6 +152,11 @@ a {
     display:none;
 }
 
+#export a {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
 
 .slider-range {
     display: none;
