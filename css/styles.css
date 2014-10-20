@@ -132,7 +132,7 @@ a {
     border-right: 5px solid transparent;
 }
 
-#editPriorities:hover, #speedFaster:hover, #speedSlower:hover, #reddit:hover, #resetSlider:hover, #reset:hover {
+#editPriorities:hover, #speedFaster:hover, #speedSlower:hover, #reddit:hover, #resetSlider:hover, #reset:hover, #export:hover {
     background-color: rgba(200,200,255,0.2);
 }
 
