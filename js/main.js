@@ -850,42 +850,44 @@ var App = {
 
 	},
 	degildHero: function (hero) {
-		if ( hero.epicLevel > 0 ) {
-			var nextHero = App.getHeroById(App.getRandomGoldenHero(hero.id));
-			App.deGildedHeroes.push(hero);
-			App.updateDegildedHeroes();
-			nextHero.epicLevel++;
-			hero.epicLevel--;
-			App.heroSouls = App.heroSouls - 2;
-			App.updateNextHeroes();
-			App.updateRecommendation();
-			App.degilds++;
+		if (hero) {
+			if ( hero.epicLevel > 0 ) {
+				var nextHero = App.getHeroById(App.getRandomGoldenHero(hero.id));
+				App.deGildedHeroes.push(hero);
+				App.updateDegildedHeroes();
+				nextHero.epicLevel++;
+				hero.epicLevel--;
+				App.heroSouls = App.heroSouls - 2;
+				App.updateNextHeroes();
+				App.updateRecommendation();
+				App.degilds++;
 
-			$("#souls").html(App.heroSouls + " Souls");
-			$('#spentSouls').html(App.deGildedHeroes.length * 2 + ' Souls spent');
-			$("#degilds").html(App.degilds + " Heroes degilded");
+				$("#souls").html(App.heroSouls + " Souls");
+				$('#spentSouls').html(App.deGildedHeroes.length * 2 + ' Souls spent');
+				$("#degilds").html(App.degilds + " Heroes degilded");
 
-			App.dps2 = App.getDps();
-			$('#dps').html(App.beautify(App.dps2) + ' dps / ' + Math.round(App.dps2 / App.dps * 100) + "%");
+				App.dps2 = App.getDps();
+				$('#dps').html(App.beautify(App.dps2) + ' dps / ' + Math.round(App.dps2 / App.dps * 100) + "%");
 
-			if ( !App.autoDegild ) {
-				ga('send', 'event', 'button', 'click', 'degild_' + hero.id, 1);
+				if ( !App.autoDegild ) {
+					ga('send', 'event', 'heroList', 'click', 'degild_' + hero.id, 1);
+				}
 			}
-		}
 
-		if (App.heroSouls > 0) {
-			$('#export').slideDown();
-		}
-		else {
-			$('#export').slideUp();
-		}
+			if (App.heroSouls > 0) {
+				$('#export').slideDown();
+			}
+			else {
+				$('#export').slideUp();
+			}
 
-		App.stats.push({
-			dps: Math.round(App.dps2 / App.dps * 100),
-			degilds: App.degilds
-		});
+			App.stats.push({
+				dps: Math.round(App.dps2 / App.dps * 100),
+				degilds: App.degilds
+			});
 
-		App.updateChart();
+			App.updateChart();
+		}
 	},
 	bindUI: function () {
 		var $heroes = $('#heroes');
