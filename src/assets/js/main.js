@@ -23,12 +23,12 @@ require.config({
 
 require(['jquery', 'app/app'], function($, App){
 	window.onerror = function(message, file, line) {
-		ga('send', 'event', 'app', 'exception', file + "(" + line + "): " + message);
+		ga('send', 'event', 'app', 'exception',"["+navigator.userAgent+"] " + file + "(" + line + "): " + message);
 		ga('send', 'exception', {
 			'exDescription': file + "(" + line + "): " + message,
 			'exFatal': true,
 			'appName': 'CHGC',
-			'appVersion': '0.12.2'
+			'appVersion': '0.12.3'
 		});
 	};
 
