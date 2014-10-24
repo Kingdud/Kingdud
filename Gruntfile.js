@@ -39,6 +39,7 @@ module.exports = function(grunt) {
 				  baseUrl: 'assets/js',
 				  preserveLicenseComments: true,
 				  removeCombined: true,
+				  optimizeCss: "standard",
 				  paths: {
 					  'nouislider': '../../../bower_components/nouislider/distribute/jquery.nouislider.all',
 					  'requirejs': '../../../bower_components/requirejs/require',
