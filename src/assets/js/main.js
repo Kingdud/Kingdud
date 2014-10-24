@@ -21,16 +21,18 @@ require.config({
   }
 });
 
-require(['app/app'], function(App){
+require(['jquery', 'app/app'], function($, App){
 	window.onerror = function(message, file, line) {
 		ga('send', 'event', 'app', 'exception', file + "(" + line + "): " + message);
 		ga('send', 'exception', {
 			'exDescription': file + "(" + line + "): " + message,
 			'exFatal': true,
 			'appName': 'CHGC',
-			'appVersion': '0.12.0'
+			'appVersion': '0.12.2'
 		});
 	};
 
-	App.init();
+	$(document).ready(function () {
+		App.init();
+	});
 });

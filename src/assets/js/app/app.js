@@ -357,8 +357,11 @@ define( [ 'jquery', 'rivets', 'crypto.MD5', 'd3', 'nouislider', 'base64', 'es5-s
 	'initializeEventHandlers': function () {
 
 		$('#importButton').click(function () {
-			App.start();
+			if ($('#input').val()) {
+				App.start();
+			}
 			ga('send', 'event', 'app', 'import', 'click');
+
 		});
 
 		$('#input').on('paste', function () {
