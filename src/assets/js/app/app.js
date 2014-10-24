@@ -357,43 +357,46 @@ define( [ 'jquery', 'rivets', 'crypto.MD5', 'd3', 'nouislider', 'base64', 'es5-s
 	'initializeEventHandlers': function () {
 
 		$('#importButton').click(function () {
+			ga('send', 'event', 'app', 'import', 'click');
 			if ($('#input').val()) {
 				App.start();
 			}
-			ga('send', 'event', 'app', 'import', 'click');
+
 
 		});
 
 		$('#input').on('paste', function () {
+			ga('send', 'event', 'app', 'import', 'paste');
 			setTimeout(function () {
 				App.start();
-				ga('send', 'event', 'app', 'import', 'paste');
 			}, 250);
 		});
 
 		$('#sort').click(function () {
+			ga('send', 'event', 'menu', 'click', 'sort', 1);
 			App.sorting = !App.sorting;
 			App.updateSorting();
 		});
 
 		$('#editPriorities').click(function () {
+			ga('send', 'event', 'menu', 'click', 'editPriorities', 1);
 			App.editing = !App.editing;
 			$('.slider-range').slideToggle();
 			$('#resetSlider').slideToggle();
-			ga('send', 'event', 'menu', 'click', 'editPriorities', 1);
 		});
 
 		$('#resetSlider').click(function () {
-			App.resetSlider();
 			ga('send', 'event', 'menu', 'click', 'resetSlider', 1);
+			App.resetSlider();
 		});
 
 		$('#reset').click(function () {
-			App.reset();
 			ga('send', 'event', 'menu', 'click', 'reset', 1);
+			App.reset();
 		});
 
 		$('#autoDegild').click(function () {
+			ga('send', 'event', 'menu', 'click', 'autoDegild', 1);
 			if ( App.autoDegild ) {
 				App.stopAutoDegild();
 			} else {
@@ -402,6 +405,7 @@ define( [ 'jquery', 'rivets', 'crypto.MD5', 'd3', 'nouislider', 'base64', 'es5-s
 		});
 
 		$('#speedFaster').click(function () {
+			ga('send', 'event', 'menu', 'click', 'faster', 1);
 			if ( App.autoDegildSpeed < 50 ) {
 				App.autoDegildSpeed++;
 			}
@@ -412,11 +416,10 @@ define( [ 'jquery', 'rivets', 'crypto.MD5', 'd3', 'nouislider', 'base64', 'es5-s
 			App.updateAutoDegild();
 
 			$('#degildsPerSecond').html(App.autoDegildSpeed + ' degild(s) per second').slideDown();
-
-			ga('send', 'event', 'menu', 'click', 'faster', 1);
 		});
 
 		$('#speedSlower').click(function () {
+			ga('send', 'event', 'menu', 'click', 'slower', 1);
 			if ( App.autoDegildSpeed > 1 ) {
 				App.autoDegildSpeed--;
 			}
@@ -426,15 +429,11 @@ define( [ 'jquery', 'rivets', 'crypto.MD5', 'd3', 'nouislider', 'base64', 'es5-s
 			App.updateAutoDegild();
 
 			$('#degildsPerSecond').html(App.autoDegildSpeed + ' degild(s) per second').slideDown();
-
-			ga('send', 'event', 'menu', 'click', 'slower', 1);
 		});
 
 		$('#export').click(function () {
-
-			App.exportSavegame();
-
 			ga('send', 'event', 'menu', 'click', 'export', 1);
+			App.exportSavegame();
 		});
 	},
 	'saveSliderSettings': function () {
