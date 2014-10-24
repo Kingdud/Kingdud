@@ -1,6 +1,6 @@
 {
 	"name": "chgc",
-	"version": "0.12.5",
+	"version": "0.12.6",
 	"description": "Clicker Heroes Gilding Calculator",
 	"repository": "https://github.com/riebel/gilding.git",
 	"devDependencies": {

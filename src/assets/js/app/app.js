@@ -1,4 +1,4 @@
-define( [ 'jquery', 'rivets', 'crypto.MD5', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2'], function ( $, rivets, MD5, d3 ) {
+define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2', 'crypto.MD5'], function ( $, rivets, d3 ) {
 
 	var App = {
 	'version': "@@version",
@@ -306,7 +306,7 @@ define( [ 'jquery', 'rivets', 'crypto.MD5', 'd3', 'nouislider', 'base64', 'es5-s
 		return numberOfGilds;
 	},
 	'getHash': function ( data ) {
-		return MD5( data + "af0ik392jrmt0nsfdghy0").toString();
+		return Crypto.MD5( data + "af0ik392jrmt0nsfdghy0").toString();
 	},
 	'sprinkle': function ( data ) {
 		var _loc2_ = data.split("");
