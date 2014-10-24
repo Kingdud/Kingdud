@@ -1,4 +1,6 @@
-var App = {
+define( [ 'jquery', 'rivets', 'crypto.MD5', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2'], function ( $, rivets, MD5, d3 ) {
+
+	var App = {
 	'version': "0.11.2",
 	'savegame': {
 		'heroCollection': []
@@ -304,7 +306,7 @@ var App = {
 		return numberOfGilds;
 	},
 	'getHash': function ( data ) {
-		return CryptoJS.MD5( data + "af0ik392jrmt0nsfdghy0").toString();
+		return MD5( data + "af0ik392jrmt0nsfdghy0").toString();
 	},
 	'sprinkle': function ( data ) {
 		var _loc2_ = data.split("");
@@ -970,16 +972,7 @@ var App = {
 
 };
 
-$(function () {
-	window.onerror = function(message, file, line) {
-		ga('send', 'event', 'app', 'exception', file + "(" + line + "): " + message);
-		ga('send', 'exception', {
-			'exDescription': file + "(" + line + "): " + message,
-			'exFatal': true,
-			'appName': 'CHGC',
-			'appVersion': '0.9.3'
-		});
+	return {
+		'init': App.init
 	};
-
-	App.init();
 });
