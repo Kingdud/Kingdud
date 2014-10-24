@@ -18,7 +18,9 @@ module.exports = function(grunt) {
 				  ]
 			  },
 			  files: [
-				  {expand: true, flatten: true, src: ['src/index.html'], dest: 'dist/'}
+				  {expand: true, flatten: true, src: ['<%= paths.build %>/index.html'], dest: '<%= paths.build %>/'},
+				  {expand: true, flatten: true, src: ['<%= paths.build %>/assets/js/main.js'], dest: '<%= paths.build %>/assets/js/'}
+
 			  ]
 		  }
 	  },
@@ -28,7 +30,7 @@ module.exports = function(grunt) {
 				  wrap: true,
 				  almond: true,
 				  replaceRequireScript: [{
-					  files: ['<%= paths.src %>/index.html'],
+					  files: ['<%= paths.build %>/index.html'],
 					  module: 'main'
 				  }],
 				  modules: [{name: 'main'}],

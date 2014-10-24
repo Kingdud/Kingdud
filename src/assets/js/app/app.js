@@ -1,7 +1,7 @@
 define( [ 'jquery', 'rivets', 'crypto.MD5', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2'], function ( $, rivets, MD5, d3 ) {
 
 	var App = {
-	'version': "0.11.2",
+	'version': "@@version",
 	'savegame': {
 		'heroCollection': []
 	},
