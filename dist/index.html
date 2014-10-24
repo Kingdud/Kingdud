@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clicker Heroes Gilding Calculator</title>
+    <meta charset="UTF-8">
+    <link href="assets/css/styles.css?v=0.12.0" type="text/css" rel="stylesheet">
+    <script src="assets/js/main.js"></script>
+</head>
+<body>
+
+<div id="import">
+    <textarea id="input" placeholder="Paste your save data here!"></textarea><br>
+    <button id="importButton">Import</button>
+</div>
+
+<div class="list">
+    <p>Information</p>
+    <ul id="info">
+        <li id="gildies">0 gilded Heroes</li>
+        <li id="souls">0 Souls</li>
+        <li id="spentSouls">0 Souls spent</li>
+        <li id="degilds">0 Heroes degilded</li>
+        <li id="dps">100% dps</li>
+        <li id="stats"></li>
+        <li>&nbsp;</li>
+        <li id="autoDegild">start auto degild</li>
+        <li id="degildsPerSecond">0 degilds per second</li>
+        <li id="speedFaster">degild faster</li>
+        <li id="speedSlower">degild slower</li>
+        <li id="editPriorities">edit gild priority</li>
+        <li id="resetSlider">reset gild priority</li>
+        <li>&nbsp;</li>
+        <li id="reset">reset calculator</li>
+        <li id="export"><a id="dl" href="#">export savegame</a></li>
+        <li>&nbsp;</li>
+        <li id="reddit"><a href="http://www.reddit.com/r/ClickerHeroes/comments/2iqfmm/clicker_heroes_gilding_calculator/" target="_blank">CHGC on reddit</a> </li>
+    </ul>
+</div>
+
+<div class="list">
+    <p>Your heroes <span id="sort" class="arrow-up"></span></p>
+    <ul id="heroes">
+        <li rv-each-hero="heroes" rv-on-click="controller.deGild" rv-flash="hero.epicLevel">
+            <span class="name">{ hero.name }</span>
+            <span class="cost">{ hero.epicLevel }</span>
+            <div class="slider-range"></div>
+        </li>
+    </ul>
+</div>
+
+<div class="list">
+    <p>Upcoming gilds</p>
+    <ul id="nextHeroes">
+        <li rv-each-hero="nextHeroes">
+            { hero.name }
+        </li>
+    </ul>
+</div>
+
+<div class="list">
+    <p>Degilded heroes</p>
+    <ul id="deGildedHeroes">
+        <li rv-each-hero="deGildedHeroes">
+            <span class="name">{ hero.name }</span>
+        </li>
+    </ul>
+</div>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+<script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-412219-23', 'auto');
+    ga('require', 'displayfeatures');
+    ga('send', 'pageview');
+</script>
+</body>
+</html>
