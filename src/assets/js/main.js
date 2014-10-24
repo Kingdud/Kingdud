@@ -28,7 +28,7 @@ require(['jquery', 'app/app'], function($, App){
 			'exDescription': file + "(" + line + "): " + message,
 			'exFatal': true,
 			'appName': 'CHGC',
-			'appVersion': '0.12.3'
+			'appVersion': '@@version'
 		});
 	};
 

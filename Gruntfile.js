@@ -14,6 +14,10 @@ module.exports = function(grunt) {
 					  {
 						  match: 'version',
 						  replacement: '<%= pkg.version %>'
+					  },
+					  {
+						  match: /<script src="assets\/js\/main\.js"><\/script>/,
+						  replacement: '<script src="assets/js/main.js?v=<%= pkg.version %>"></script>'
 					  }
 				  ]
 			  },
