@@ -595,6 +595,13 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 			$transport.find('span.fontawesome-fast-backward, span.fontawesome-backward').addClass('disabled');
 		}
 
+		if (App.heroSouls > 0) {
+			$('#export').slideDown();
+		}
+		else {
+			$('#export').slideUp();
+		}
+
 		App.updateChart();
 		App.updateNextHeroes();
 		App.updateRecommendation();
