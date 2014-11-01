@@ -355,14 +355,13 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 		}
 	},
 	'initializeEventHandlers': function () {
+		var $transport = $('#transport');
 
 		$('#importButton').click(function () {
 			ga('send', 'event', 'app', 'import', 'click');
 			if ($('#input').val()) {
 				App.start();
 			}
-
-
 		});
 
 		$('#input').on('paste', function () {
@@ -390,12 +389,18 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 			App.resetSlider();
 		});
 
-		$('#reset').click(function () {
+		$transport.find('.fontawesome-fast-backward').click(function () {
 			ga('send', 'event', 'menu', 'click', 'reset', 1);
-			App.reset();
+			App.setState(0);
 		});
 
-		$('#autoDegild').click(function () {
+		$transport.find('.fontawesome-backward').click(function () {
+			ga('send', 'event', 'menu', 'click', 'backward', 1);
+			App.setState( App.degilds - 1 );
+		});
+
+		$transport.find('.fontawesome-play').click(function () {
+			$('#transport').find('span.fontawesome-play, span.fontawesome-pause').toggleClass('fontawesome-play fontawesome-pause');
 			ga('send', 'event', 'menu', 'click', 'autoDegild', 1);
 			if ( App.autoDegild ) {
 				App.stopAutoDegild();
@@ -404,31 +409,43 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 			}
 		});
 
-		$('#speedFaster').click(function () {
+		$transport.find('.fontawesome-forward').click(function () {
+			ga('send', 'event', 'menu', 'click', 'forward', 1);
+			App.stopAutoDegild();
+			App.clickRecommendedHero();
+		});
+
+		$transport.find('.fontawesome-plus').click(function () {
 			ga('send', 'event', 'menu', 'click', 'faster', 1);
+			$transport.find('.fontawesome-minus').removeClass('disabled');
+			App.autoDegildSpeed++;
 			if ( App.autoDegildSpeed < 50 ) {
-				App.autoDegildSpeed++;
+				$transport.find('.fontawesome-plus').removeClass('disabled');
 			}
 			else {
+				$transport.find('.fontawesome-plus').addClass('disabled');
 				App.autoDegildSpeed = 50;
 			}
 
 			App.updateAutoDegild();
 
-			$('#degildsPerSecond').html(App.autoDegildSpeed + ' degild(s) per second').slideDown();
+			$('#transport').find('.fontawesome-time').attr('title', App.autoDegildSpeed + ' degild(s) per second');
 		});
 
-		$('#speedSlower').click(function () {
+		$transport.find('.fontawesome-minus').click(function () {
 			ga('send', 'event', 'menu', 'click', 'slower', 1);
+			$transport.find('.fontawesome-plus').removeClass('disabled');
+			App.autoDegildSpeed--;
 			if ( App.autoDegildSpeed > 1 ) {
-				App.autoDegildSpeed--;
+				$transport.find('.fontawesome-minus').removeClass('disabled');
 			}
 			else {
+				$transport.find('.fontawesome-minus').addClass('disabled');
 				App.autoDegildSpeed = 1;
 			}
 			App.updateAutoDegild();
 
-			$('#degildsPerSecond').html(App.autoDegildSpeed + ' degild(s) per second').slideDown();
+			$transport.find('.fontawesome-time').attr('title', App.autoDegildSpeed + ' degild(s) per second');
 		});
 
 		$('#export').click(function () {
@@ -470,64 +487,50 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 		return false;
 	},
 	'updateRecommendation': function () {
-		var hero = App.getLeastEfficientHero();
+		var hero = App.getLeastEfficientHero(),
+			$transport = $('#transport');
 		$('#heroes').find('li').removeClass('recommendation');
 		if (hero) {
 			var $heroLi = App.getHeroLiByName(hero.name);
 			$heroLi.addClass('recommendation');
+			$transport.find('span.fontawesome-play, span.fontawesome-forward').removeClass('disabled');
+		} else {
+			$transport.find('span.fontawesome-play, span.fontawesome-forward').addClass('disabled');
+		}
+	},
+	'clickRecommendedHero': function() {
+		var $recommendation = $('.recommendation');
+		if ( $recommendation ) {
+			$recommendation.click();
+			App.updateRecommendation();
+		}
+		else {
+			App.stopAutoDegild();
 		}
 	},
 	'startAutoDegild': function () {
-		var $autoDegild = $('#autoDegild');
-		$autoDegild.addClass("stop");
-
+		var $transport = $('#transport');
+		$transport.find('span.fontawesome-play').toggleClass('fontawesome-play fontawesome-pause');
 		App.autoDegild = setInterval(function () {
-			var $recommendation = $('.recommendation');
-			if ( $recommendation ) {
-				$recommendation.click();
-				App.updateRecommendation();
-			}
-			else {
-				App.stopAutoDegild();
-			}
+			App.clickRecommendedHero();
 		}, 1000 / App.autoDegildSpeed);
 
-		$autoDegild.html('stop auto degild');
-
 		$('#degildsPerSecond').html(App.autoDegildSpeed + ' degild(s) per second').slideDown();
-		$('#speedFaster').slideDown();
-		$('#speedSlower').slideDown();
-
-		ga('send', 'event', 'menu', 'click', 'autoGild_start', 1);
 	},
 	'stopAutoDegild': function () {
-		var $autoDegild = $('#autoDegild');
+		var $transport = $('#transport');
+		$transport.find('span.fontawesome-pause').toggleClass('fontawesome-play fontawesome-pause');
 
 		clearInterval(App.autoDegild);
 		App.autoDegild = 0;
-
-		$autoDegild.html('start auto degild');
-		$autoDegild.removeClass("stop");
-
-		$('#speedFaster').slideUp();
-		$('#speedSlower').slideUp();
-		$('#degildsPerSecond').slideUp();
-
-		ga('send', 'event', 'menu', 'click', 'autoGild_stop', 1);
-		ga('send', 'event', 'app', 'log', 'degilded', App.degilds);
 	},
 	'updateAutoDegild': function () {
-		clearInterval(App.autoDegild);
-		App.autoDegild = setInterval(function () {
-			var $recommendation = $('.recommendation');
-			if ( $recommendation ) {
-				$recommendation.click();
-				App.updateRecommendation();
-			}
-			else {
-				App.stopAutoDegild();
-			}
-		}, 1000 / App.autoDegildSpeed);
+		if (App.autoDegild) {
+			clearInterval(App.autoDegild);
+			App.autoDegild = setInterval(function () {
+				App.clickRecommendedHero();
+			}, 1000 / App.autoDegildSpeed);
+		}
 	},
 	'resetSlider': function () {
 		var sortedHeroes = [],
@@ -557,31 +560,42 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 
 		App.saveSliderSettings();
 	},
-	'reset': function () {
-		App.stopAutoDegild();
-
-		App.degilds = 0;
-		App.deGildedHeroes = [];
-		App.heroSouls = App.originalSouls;
-		App.autoDegildSpeed = 1;
-		App.stats = [{ dps:100, degilds:0}];
-
-		$("#degilds").html(App.degilds + " Heroes degilded");
-		$("#deGildedHeroes").empty();
-		$("#stats").slideUp();
-
-		App.epicHeroSeed = App.originalSeed;
-
-		for ( var i = 0; i < App.heroes.length; i++ ) {
-			App.heroes[ i ].epicLevel = App.originalHeroes[ i ].epicLevel;
+	'setState': function( degild ) {
+		var $transport = $('#transport');
+		if (degild < 0) {
+			degild = 0;
 		}
 
-		$("#souls").html(App.heroSouls + " Souls");
-		$('#spentSouls').html(App.deGildedHeroes.length * 2 + ' Souls spent');
-		$('#degildsPerSecond').html(Math.round(1000 / App.autoDegildSpeed * 100) / 100 + ' degilds per second');
-		$('#dps').html(App.beautify(App.dps) + ' dps / ' + "100%");
-		$('#export').slideDown();
+		App.stopAutoDegild();
 
+		App.degilds = degild;
+
+		App.heroSouls = App.originalSouls - degild * 2;
+
+		App.epicHeroSeed = App.stats[degild].seed;
+
+		$("#degilds").html(App.degilds + " Heroes degilded");
+
+		for ( var i = 0; i < App.stats[ degild ].heroes.length; i++ ) {
+			App.heroes[ i ].epicLevel = App.stats[ degild ].heroes[i].epicLevel;
+		}
+
+		App.deGildedHeroes = App.deGildedHeroes.slice(0, degild);
+		App.stats = App.stats.slice(0, degild + 1);
+
+		App.updateDegildedHeroes();
+		App.dps2 = App.getDps();
+
+		$("#souls").html(App.heroSouls + " Souls");
+		$('#spentSouls').html(App.degilds * 2 + ' Souls spent');
+		$transport.find('.fontawesome-time').attr('title', App.autoDegildSpeed + ' degild(s) per second');
+		$('#dps').html(App.beautify(App.dps2) + ' dps / ' + Math.round(App.dps2 / App.dps * 100) + "%");
+
+		if (degild == 0) {
+			$transport.find('span.fontawesome-fast-backward, span.fontawesome-backward').addClass('disabled');
+		}
+
+		App.updateChart();
 		App.updateNextHeroes();
 		App.updateRecommendation();
 	},
@@ -872,10 +886,6 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 
 				App.dps2 = App.getDps();
 				$('#dps').html(App.beautify(App.dps2) + ' dps / ' + Math.round(App.dps2 / App.dps * 100) + "%");
-
-				if ( !App.autoDegild ) {
-					ga('send', 'event', 'heroList', 'click', 'degild_' + hero.id, 1);
-				}
 			}
 
 			if (App.heroSouls > 0) {
@@ -887,8 +897,12 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 
 			App.stats.push({
 				dps: Math.round(App.dps2 / App.dps * 100),
-				degilds: App.degilds
+				degilds: App.degilds,
+				seed: App.epicHeroSeed,
+				heroes: JSON.parse( JSON.stringify( App.heroes ) )
 			});
+
+			$('#transport').find('span.fontawesome-fast-backward, span.fontawesome-backward').removeClass('disabled');
 
 			App.updateChart();
 		}
@@ -964,7 +978,9 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 
 		App.stats.push({
 			dps: 100,
-			degilds: 0
+			degilds: 0,
+			seed: App.epicHeroSeed,
+			heroes: JSON.parse( JSON.stringify( App.heroes ) )
 		});
 
 		App.createChart();
@@ -973,8 +989,8 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 	}
 
 };
-
 	return {
-		'init': App.init
+		'init': App.init,
+		'App': App
 	};
 });

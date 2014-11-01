@@ -34,5 +34,6 @@ require(['jquery', 'app/app'], function($, App){
 
 	$(document).ready(function () {
 		App.init();
+		window.App = App.App;
 	});
 });

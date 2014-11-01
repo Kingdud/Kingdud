@@ -1,5 +1,11 @@
 @import url("http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic,700,700italic");
+@import url("http://weloveiconfonts.com/api/?family=fontawesome");
 @import "jquery.nouislider.min.css";
+
+/* fontawesome */
+[class*="fontawesome-"]:before {
+    font-family: 'FontAwesome', sans-serif;
+}
 
 body
 {
@@ -60,7 +66,7 @@ a {
     display: none;
 }
 
-#heroes li, #editPriorities, #autoDegild, #speedFaster, #speedSlower, #resetSlider, #reset
+#heroes li, #editPriorities, #autoDegild, #speedFaster, #speedSlower, #resetSlider, #reset, #transport
 {
     -webkit-touch-callout:none;
     -webkit-user-select:none;
@@ -133,6 +139,10 @@ a {
     border-top: 10px solid white;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
+}
+#transport {
+    display: flex;
+    justify-content: space-between;
 }
 
 #editPriorities:hover, #speedFaster:hover, #speedSlower:hover, #reddit:hover, #resetSlider:hover, #reset:hover, #export:hover {
@@ -260,7 +270,9 @@ a {
 }
 
 #stats {
-    display: none;
+    height: 278px;
+    margin: 0;
+    padding: 0;
 }
 
 svg {
