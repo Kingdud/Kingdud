@@ -997,7 +997,6 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 
 };
 	return {
-		'init': App.init,
-		'App': App
+		'init': App.init
 	};
 });
