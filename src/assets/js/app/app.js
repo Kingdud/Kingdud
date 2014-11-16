@@ -77,6 +77,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 	'dps': 0,
 	'dps2': 0,
 	'editing': false,
+	'manualForward': false,
 	'stats': [],
 	'rand': function () {
 		App.epicHeroSeed = App.epicHeroSeed * 16807 % 2147483647;
@@ -362,7 +363,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 			if ($('#input').val()) {
 				App.start();
 			}
-		});
+		}).focus();
 
 		$('#input').on('paste', function () {
 			ga('send', 'event', 'app', 'import', 'paste');
@@ -412,7 +413,9 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 		$transport.find('.fontawesome-forward').click(function () {
 			ga('send', 'event', 'menu', 'click', 'forward', 1);
 			App.stopAutoDegild();
+			App.manualForward = true;
 			App.clickRecommendedHero();
+			App.manualForward = false;
 		});
 
 		$transport.find('.fontawesome-plus').click(function () {
@@ -452,6 +455,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 			ga('send', 'event', 'menu', 'click', 'export', 1);
 			App.exportSavegame();
 		});
+
 	},
 	'saveSliderSettings': function () {
 		var sliderSettings = [];
@@ -630,7 +634,9 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 		var notations = ['','t','M','B','T','q','Q','s','S','O','N','d','U','D','!','@','#','$','%','^','&','*'];
 		return function (value) {
 			var base = 0,
-				notationValue = '';
+				notationValue = '',
+				originalValue;
+			originalValue = value;
 			if ( value >= 1000000 && isFinite(value) ) {
 				value /= 1000;
 				while ( Math.round(value) >= 1000 ) {
@@ -638,7 +644,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 					base++;
 				}
 				if ( base > notations.length ) {
-					return 'Infinity';
+					return originalValue.toExponential(3);
 				} else {
 					notationValue = notations[ base ];
 				}
@@ -835,7 +841,6 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 	updateChart: function () {
 		$("#stats").slideDown();
 		var margin = {top: 20, right: 10, bottom: 30, left: 35},
-			width = 275 - margin.left - margin.right,
 			height = 275 - margin.top - margin.bottom;
 
 		var x = d3.scale.linear()
@@ -920,7 +925,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 			heroes: App.heroes,
 			controller: {
 				'deGild': function (e, data) {
-					if (!App.editing || App.autoDegild) {
+					if (!App.editing || App.autoDegild || App.manualForward) {
 						if ( e.shiftKey ) {
 							while ( data.hero.epicLevel > 0 ) {
 								App.degildHero( data.hero );
