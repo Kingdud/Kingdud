@@ -30,7 +30,17 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 		{ id: 23, name: "Aphrodite, Goddess of Love", epicLevel: 0, efficiency: 3.822e62 / 1872, baseCost: 350e18 },
 		{ id: 24, name: "Shinatobe, Wind Deity", epicLevel: 0, efficiency: 2.830e61 / 1779, baseCost: 14e21 },
 		{ id: 25, name: "Grant, the General", epicLevel: 0, efficiency: 1.562e61 / 1686, baseCost: 4199e21 },
-		{ id: 26, name: "Frostleaf", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 2100e24 }
+		{ id: 26, name: "Frostleaf", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 2100e24 },
+		{ id: 27, name: "Dread Knight", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e40 },
+		{ id: 28, name: "Atlas", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e55 },
+		{ id: 29, name: "Terra", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e70 },
+		{ id: 30, name: "Phthalo", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e85 },
+		{ id: 31, name: "Orntchya Gladeye", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e100 },
+		{ id: 32, name: "Lilin", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e115 },
+		{ id: 33, name: "Cadmia", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e130 },
+		{ id: 34, name: "Alabaster", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e145 },
+		{ id: 35, name: "Astraea", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e160 }
+		//{ id: 36, name: "Test 1", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e175 }
 	],
 	'ancients': [
 		{ name: "Solomon, Ancient of Wisdom", id: 3 },
@@ -79,6 +89,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 	'editing': false,
 	'manualForward': false,
 	'stats': [],
+	'totalGold': 0,
 	'rand': function () {
 		App.epicHeroSeed = App.epicHeroSeed * 16807 % 2147483647;
 
@@ -97,11 +108,37 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 	},
 	'getRandomGoldenHero': function (startingHeroId) {
 		var heroId = startingHeroId;
-		while ( heroId == startingHeroId ) {
-			heroId = App.integer(2, 26);
 
+		while ( heroId == startingHeroId ) {
+			heroId = App.integer(2, App.getHighestHeroSeen());
 		}
 		return heroId;
+	},
+	'getHighestHeroSeen': function ()
+	{
+		var c = 1,
+			found = false,
+			foundHeroId = false;
+
+		App.heroes.forEach( function( hero ) {
+			if (App.totalGold < hero.baseCost && !found) {
+				found = true;
+				foundHeroId = hero.id;
+			}
+			if (!found) {
+				c++;
+			}
+		});
+
+		if (found) {
+			return foundHeroId;
+		}
+
+		if (c == App.heroes.length) {
+			return App.heroes.length;
+		}
+
+		return 0;
 	},
 	'getNextHeroes': function (max) {
 		var seed = App.epicHeroSeed;
@@ -421,7 +458,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 		$transport.find('.fontawesome-plus').click(function () {
 			ga('send', 'event', 'menu', 'click', 'faster', 1);
 			$transport.find('.fontawesome-minus').removeClass('disabled');
-			App.autoDegildSpeed++;
+			App.autoDegildSpeed = App.autoDegildSpeed + 5;
 			if ( App.autoDegildSpeed < 50 ) {
 				$transport.find('.fontawesome-plus').removeClass('disabled');
 			}
@@ -438,7 +475,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 		$transport.find('.fontawesome-minus').click(function () {
 			ga('send', 'event', 'menu', 'click', 'slower', 1);
 			$transport.find('.fontawesome-plus').removeClass('disabled');
-			App.autoDegildSpeed--;
+			App.autoDegildSpeed = App.autoDegildSpeed - 5;
 			if ( App.autoDegildSpeed > 1 ) {
 				$transport.find('.fontawesome-minus').removeClass('disabled');
 			}
@@ -701,6 +738,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 
 		App.heroes.forEach(function (hero) {
 			hero.epicLevel = lookupSavedHero[ hero.id ].epicLevel;
+			hero.locked = lookupSavedHero[ hero.id ].locked;
 			hero.level = lookupSavedHero[ hero.id ].level;
 			hero.damageMultiplier = lookupSavedHero[ hero.id ].damageMultiplier;
 			hero.baseAttack = function () {
@@ -968,6 +1006,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 		App.allDpsMultiplier = App.savegame.allDpsMultiplier;
 		App.dps = App.getDps();
 		App.numberOfGilds = App.getNumberOfGilds();
+		App.totalGold = App.savegame.totalGold;
 
 		App.bindUI();
 		App.updateNextHeroes();
