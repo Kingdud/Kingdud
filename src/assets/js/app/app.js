@@ -737,10 +737,17 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 		}
 
 		App.heroes.forEach(function (hero) {
-			hero.epicLevel = lookupSavedHero[ hero.id ].epicLevel;
-			hero.locked = lookupSavedHero[ hero.id ].locked;
-			hero.level = lookupSavedHero[ hero.id ].level;
-			hero.damageMultiplier = lookupSavedHero[ hero.id ].damageMultiplier;
+			hero.epicLevel = 0;
+			hero.locked = true;
+			hero.level = 0;
+			hero.damageMultiplier = 0;
+			if (lookupSavedHero[ hero.id ]) {
+				hero.epicLevel = lookupSavedHero[ hero.id ].epicLevel || 0;
+				hero.locked = lookupSavedHero[ hero.id ].locked || true;
+				hero.level = lookupSavedHero[ hero.id ].level || 0;
+				hero.damageMultiplier = lookupSavedHero[ hero.id ].damageMultiplier || 0;
+			}
+
 			hero.baseAttack = function () {
 				if ( this.id == 1 ) {
 					return 0;
@@ -748,6 +755,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 				//noinspection JSPotentiallyInvalidUsageOfThis
 				return Math.ceil(this.baseCost / 10 * Math.pow(1 - 0.0188 * Math.min(this.id, 14), this.id));
 			};
+
 			hero.getEpicBonus = function () {
 				App.gildedDamageBonusPercent = 0;
 
