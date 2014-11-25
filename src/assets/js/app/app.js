@@ -125,17 +125,15 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 				found = true;
 				foundHeroId = hero.id;
 			}
-			if (!found) {
-				c++;
-			}
+			c++;
 		});
 
 		if (found) {
 			return foundHeroId;
 		}
 
-		if (c == App.heroes.length) {
-			return App.heroes.length;
+		if (c == App.heroes.length + 1) {
+			return App.heroes.length + 1;
 		}
 
 		return 0;
