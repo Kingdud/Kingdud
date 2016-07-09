@@ -934,7 +934,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 			if ( hero.epicLevel > 0 ) {
 				var nextHero = App.getHeroById(App.getRandomGoldenHero(hero.id));
 				App.deGildedHeroes.push(hero);
-				App.updateDegildedHeroes();
+				//App.updateDegildedHeroes();
 				nextHero.epicLevel++;
 				hero.epicLevel--;
 				App.heroSouls = App.heroSouls - 2;
