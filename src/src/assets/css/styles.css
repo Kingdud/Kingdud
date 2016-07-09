@@ -1,0 +1,300 @@
+@import "jquery.nouislider.min.css";
+
+/* fontawesome */
+[class*="fontawesome-"]:before {
+    font-family: 'FontAwesome', sans-serif;
+}
+
+body
+{
+    background-color:#000;
+    font-size:16px;
+    font-family:'Source Sans Pro', sans-serif;
+    color:#fff;
+    font-weight:700;
+    text-shadow:0 0 5px #000;
+}
+
+a {
+    color:#fff;
+    text-decoration: none;
+}
+
+#import {
+    margin:20px 0 0 20px;
+}
+
+.list {
+    float: left;
+    display: none;
+}
+
+.list > p{
+    margin:0 0 0 20px;
+}
+
+.list ul
+{
+    list-style:none inside;
+    color:#fff;
+    background-color: rgba(200,200,255,0.1);
+    border-radius: 10px;
+    margin: 20px 0 0 10px;
+    width: 285px;
+    padding:0;
+}
+
+.list ul li
+{
+    clear:both;
+    border-bottom:1px solid rgba(200,200,255,0.1);
+    padding:5px 10px;
+}
+
+.cost
+{
+    float:right;
+    font-size:75%;
+    margin-left:10px;
+}
+
+#deGildedHeroes {
+    overflow-y:auto;
+    max-height: 800px;
+    display: none;
+}
+
+#heroes li, #editPriorities, #autoDegild, #speedFaster, #speedSlower, #resetSlider, #reset, #transport
+{
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    -khtml-user-select:none;
+    user-select:none;
+
+    cursor: pointer;
+}
+
+#nextHeroes {
+    overflow: hidden;
+}
+
+#input {
+    overflow: hidden;
+    background-color:rgba(200,200,255,0.1);
+    border: none;
+    color: #ffffff;
+    width: 600px;
+    height: 200px;
+    border-radius:10px;
+    margin-bottom: 10px;
+}
+
+#import button {
+
+    background-color:rgba(200,200,255,0.1);
+    border: none;
+    color: #ffffff;
+    width: 600px;
+    height: 30px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+#import button:hover {
+    background-color:rgba(200,200,255,0.2);
+}
+
+.disabled {
+    color: #777777;
+}
+
+.degild {
+    background-color: #ff0000 !important;
+}
+
+.gild {
+    background-color: #1aff00;
+}
+
+#sort {
+    cursor: pointer;
+    display: inline-block;
+    height: 0;
+    margin-left: 10px;
+    width: 0;
+}
+
+.arrow-up {
+    border-bottom: 10px solid white;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+
+}
+
+.arrow-down {
+    border-top: 10px solid white;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+}
+#transport {
+    display: flex;
+    justify-content: space-between;
+}
+
+#transport span {
+    display: inline-block;
+}
+
+#editPriorities:hover, #speedFaster:hover, #speedSlower:hover, #reddit:hover, #resetSlider:hover, #reset:hover, #export:hover {
+    background-color: rgba(200,200,255,0.2);
+}
+
+#autoDegild {
+    /*display: none;*/
+}
+
+#autoDegild:hover {
+    background-color: #1aff00;
+}
+
+.stop:hover {
+    background-color: #ff0000 !important;
+}
+
+#speedFaster, #speedSlower, #resetSlider, #degildsPerSecond {
+    display:none;
+}
+
+#export a {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+.slider-range {
+    display: none;
+    margin: 15px 0 10px 0;
+}
+
+.noUi-horizontal {
+    height: 10px;
+}
+
+.noUi-horizontal .noUi-handle {
+    height: 20px;
+}
+
+.noUi-handle:after, .noUi-handle:before {
+    top: 3px;
+    left: 4px;
+}
+
+.noUi-horizontal .noUi-handle {
+    left: -8px;
+    width: 16px;
+}
+
+.noUi-handle:after {
+    left: 9px;
+}
+
+.noUi-base {
+     background-color: #1aff00;
+}
+
+.noUi-origin {
+    background: none repeat scroll 0 0 #ff0000;
+}
+
+.noUi-origin:first-child {
+    background: none repeat scroll 0 0 yellow;
+}
+
+.slider-range:hover .tooltip {
+    display: block;
+    -webkit-animation: fadein 0.3s; /* Safari, Chrome and Opera > 12.1 */
+    -moz-animation: fadein 0.3s; /* Firefox < 16 */
+    -ms-animation: fadein 0.3s; /* Internet Explorer */
+    -o-animation: fadein 0.3s; /* Opera < 12.1 */
+    animation: fadein 0.3s;
+}
+
+.tooltip {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.6);
+    border: 1px solid #777;
+    border-radius: 5px;
+    color: #fff;
+    display: none;
+    font: bold 12px/12px Arial;
+    left: -18px;
+    padding: 5px;
+    position: absolute;
+    text-align: center;
+    top: -33px;
+    width: 56px;
+}
+.tooltip strong {
+    display: block;
+    padding: 2px;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.recommendation {
+    background-color: yellow;
+}
+
+.recommendation.gild {
+    background-color: rgb(255, 128, 0);
+}
+
+#stats {
+    height: 278px;
+    margin: 0;
+    padding: 0;
+}
+
+svg {
+    fill: #ffffff;
+
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #fff;
+    shape-rendering: crispEdges;
+}
+
+.x.axis path {
+    /*display: none;*/
+}
+
+.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
