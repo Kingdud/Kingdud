@@ -39,7 +39,12 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 		{ id: 32, name: "Lilin", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e115 },
 		{ id: 33, name: "Cadmia", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e130 },
 		{ id: 34, name: "Alabaster", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e145 },
-		{ id: 35, name: "Astraea", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e160 }
+		{ id: 35, name: "Astraea", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e160 },
+		{ id: 36, name: "Chiron", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e175 },
+		{ id: 37, name: "Moloch", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e190 },
+		{ id: 38, name: "Bomber Max", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e205 },
+		{ id: 39, name: "Gog", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e220 },
+		{ id: 40, name: "Wepawawet", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e235 }
 		//{ id: 36, name: "Test 1", epicLevel: 0, efficiency: 1.107e63 / 1657, baseCost: 1e175 }
 	],
 	'ancients': [
@@ -77,7 +82,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 	'originalSeed': 0,
 	'sorting': true,
 	'autoDegild': 0,
-	'autoDegildSpeed': 1,
+	'autoDegildSpeed': 1000,
 	'degilds': 0,
 	'epicHeroSeed': 0,
 	'numberOfGilds': 0,
@@ -152,7 +157,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 	},
 	'updateNextHeroes': function () {
 
-		App.nextHeroes = App.getNextHeroes(100);
+		App.nextHeroes = App.getNextHeroes(1);
 
 		var $nextHeroes = $('#nextHeroes');
 		$nextHeroes.empty();
@@ -457,12 +462,12 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 			ga('send', 'event', 'menu', 'click', 'faster', 1);
 			$transport.find('.fontawesome-minus').removeClass('disabled');
 			App.autoDegildSpeed = App.autoDegildSpeed + 5;
-			if ( App.autoDegildSpeed < 50 ) {
+			if ( App.autoDegildSpeed < 1000 ) {
 				$transport.find('.fontawesome-plus').removeClass('disabled');
 			}
 			else {
 				$transport.find('.fontawesome-plus').addClass('disabled');
-				App.autoDegildSpeed = 50;
+				App.autoDegildSpeed = 1000;
 			}
 
 			App.updateAutoDegild();
@@ -589,7 +594,8 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 		sortedHeroes.forEach(function (hero) {
 			var $heroLi = App.getHeroLiByName(hero.name);
 			if ( i < 6 ) {
-				$heroLi.find('.slider-range').val([ 0, App.numberOfGilds ]);
+				//$heroLi.find('.slider-range').val([ 0, App.numberOfGilds ]);
+				$heroLi.find('.slider-range').val([ 0, 0 ]);
 			}
 			else {
 				$heroLi.find('.slider-range').val([ 0, 0 ]);
@@ -622,7 +628,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 		App.deGildedHeroes = App.deGildedHeroes.slice(0, degild);
 		App.stats = App.stats.slice(0, degild + 1);
 
-		App.updateDegildedHeroes();
+		//App.updateDegildedHeroes();
 		App.dps2 = App.getDps();
 
 		$("#souls").html(App.heroSouls + " Souls");
@@ -641,9 +647,9 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 			$('#export').slideUp();
 		}
 
-		App.updateChart();
+		//App.updateChart();
 		App.updateNextHeroes();
-		App.updateRecommendation();
+		//App.updateRecommendation();
 	},
 	'getHeroSoulWorldDamageBonus': function () {
 		var ancientsDps = 0;
@@ -960,7 +966,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 
 			$('#transport').find('span.fontawesome-fast-backward, span.fontawesome-backward').removeClass('disabled');
 
-			App.updateChart();
+			//App.updateChart();
 		}
 	},
 	bindUI: function () {
@@ -1012,7 +1018,8 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 		App.allDpsMultiplier = App.savegame.allDpsMultiplier;
 		App.dps = App.getDps();
 		App.numberOfGilds = App.getNumberOfGilds();
-		App.totalGold = App.savegame.totalGold;
+		//App.totalGold = App.savegame.totalGold;
+		App.totalGold = App.savegame.highestGold;
 
 		App.bindUI();
 		App.updateNextHeroes();
@@ -1040,7 +1047,7 @@ define( [ 'jquery', 'rivets', 'd3', 'nouislider', 'base64', 'es5-shim', 'json2',
 			heroes: JSON.parse( JSON.stringify( App.heroes ) )
 		});
 
-		App.createChart();
+		//App.createChart();
 
 		ga('send', 'event', 'app', 'log', 'started');
 	}
